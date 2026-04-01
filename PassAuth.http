@@ -1,0 +1,6 @@
+@PassAuth_HostAddress = http://localhost:5106
+
+GET {{PassAuth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
