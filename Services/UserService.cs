@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
+using PassAuth.DTOs;
 using PassAuth.Models;
 namespace PassAuth.Services
 {
@@ -14,12 +15,25 @@ namespace PassAuth.Services
             this.context = context;
         }
 
-        public async Task AddAsync(User user)
+        public async Task<User> AddAsync(UserDto userDto, string plainPass)
         {
-            PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
-            user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
-            context.Users.Add(user);
+            // 1. Transformamos o que veio da web (DTO) em um objeto de banco (Entity)
+            var novoUsuario = new User
+            {
+                Username = userDto.Username
+                // Não preenchemos a senha ainda!
+            };
+
+            // 2. Instanciamos o Hasher com o tipo da ENTITY
+            var passwordHasher = new PasswordHasher<User>();
+
+            // 3. Geramos o hash usando o próprio objeto que será salvo
+            novoUsuario.PasswordHash = passwordHasher.HashPassword(novoUsuario, userDto.Password);
+
+            // 4. Salvamos
+            context.Users.Add(novoUsuario);
             await context.SaveChangesAsync();
+            return novoUsuario;
         }
 
         public async Task DeleteAsync(int id)

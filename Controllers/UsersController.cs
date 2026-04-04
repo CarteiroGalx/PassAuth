@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PassAuth.DTOs;
 using PassAuth.Models;
 using PassAuth.Services;
 
@@ -57,10 +58,17 @@ namespace PassAuth.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDto user)
         {
-            await service.AddAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            var newUser = await service.AddAsync(user, user.Password);
+
+            var userResponse = new
+            {
+                id = newUser.Id,
+                userName = newUser.Username
+            };
+
+            return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
         // DELETE: api/Users/5
