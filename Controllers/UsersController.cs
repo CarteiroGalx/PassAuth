@@ -59,7 +59,6 @@ namespace PassAuth.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-
             await service.AddAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }

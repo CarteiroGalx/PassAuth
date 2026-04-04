@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
 using PassAuth.Models;
@@ -15,6 +16,8 @@ namespace PassAuth.Services
 
         public async Task AddAsync(User user)
         {
+            PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
             context.Users.Add(user);
             await context.SaveChangesAsync();
         }
