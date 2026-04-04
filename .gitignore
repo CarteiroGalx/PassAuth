@@ -9,9 +9,19 @@
 *.user
 *.userosscache
 *.sln.docstates
+
+# Banco de Dados
 *.db
 *.db-shm
 *.db-wal
+
+# Pastas de Compilação 
+bin/
+obj/
+
+# Configurações de Usuário 
+.vscode/
+.user
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
