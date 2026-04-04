@@ -10,7 +10,7 @@ using PassAuth.Context;
 namespace PassAuth.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260403175751_InitialCreate")]
+    [Migration("20260404214212_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

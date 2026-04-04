@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PassAuth.Context;
+﻿using Microsoft.AspNetCore.Mvc;
 using PassAuth.Models;
+using PassAuth.Services;
 
 namespace PassAuth.Controllers
 {
@@ -14,25 +8,25 @@ namespace PassAuth.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUserService service;
 
-        public UsersController(AppDbContext context)
+        public UsersController(IUserService service)
         {
-            _context = context;
+            this.service = service;
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await service.GetAllAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await service.GetByIdAsync(id);
 
             if (user == null)
             {
@@ -47,30 +41,17 @@ namespace PassAuth.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
+            if (id != user.Id) return BadRequest();
 
             try
             {
-                await _context.SaveChangesAsync();
+                await service.UpdateAsync(user);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (KeyNotFoundException ex)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(new { error = ex.Message });
             }
-
-            return NoContent();
         }
 
         // POST: api/Users
@@ -78,31 +59,24 @@ namespace PassAuth.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            await service.AddAsync(user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                await service.DeleteAsync(id);
+                return NoContent();
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { e = ex.Message });
+            }
         }
     }
 }
