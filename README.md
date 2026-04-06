@@ -11,7 +11,26 @@ O foco do projeto é a **autenticação e segurança**, e por isso quaisquer out
 - PassHasher
 
 ## 📂Estrutura do projeto
-<img width="240" height="345" alt="image" src="https://github.com/user-attachments/assets/c13871cf-2393-41fc-9e71-38f336b05384" />
+```bash
+PassAuth/
+├── Context/
+│   └── AppDbContext.cs
+├── Controllers/
+│   ├── AuthController.cs
+│   └── UserController.cs
+├── DTOs/
+│   └── UserDto.cs
+├── Migrations/
+│   └── (Arquivos de migração)
+├── Models/
+│   ├── User.cs
+│   └── Enums/
+│       └── UserRole.cs
+├── Services/
+│   ├── IUserService.cs
+│   └── UserService.cs
+└── Program.cs
+```
 
 ## 🔍Como rodar o projeto
 - Primeiro de tudo, copie o reposítorio em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
