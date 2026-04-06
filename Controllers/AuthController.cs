@@ -3,6 +3,7 @@ using PassAuth.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PassAuth.Context;
 
 namespace PassAuth.Controllers
 {
@@ -10,17 +11,31 @@ namespace PassAuth.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-
-        public static User user = new();
+        private readonly AppDbContext _context;
+        public AuthController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public async Task<ActionResult> Register(UserDto request)
         {
-            var hashedPassword = new PasswordHasher<User>().HashPassword(user, request.Password);
+            var newUser = new User
+            {
+                Username = request.Username
+            };
+            var hasher = new PasswordHasher<User>();
+            newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+            var response = new
+            {
+                id = newUser.Id,
+                username = newUser.Username,
+                response = "Usuário resgistrado com sucesso!"
+            };
 
-            user.Username = request.Username;
-            user.PasswordHash = hashedPassword;
-            return Ok(user);
+            return StatusCode(201, response);
         }
 
         [HttpPost("login")]
