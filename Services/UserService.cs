@@ -17,20 +17,15 @@ namespace PassAuth.Services
 
         public async Task<User> AddAsync(UserDto userDto, string plainPass)
         {
-            // 1. Transformamos o que veio da web (DTO) em um objeto de banco (Entity)
             var novoUsuario = new User
             {
                 Username = userDto.Username
-                // Não preenchemos a senha ainda!
             };
 
-            // 2. Instanciamos o Hasher com o tipo da ENTITY
             var passwordHasher = new PasswordHasher<User>();
 
-            // 3. Geramos o hash usando o próprio objeto que será salvo
             novoUsuario.PasswordHash = passwordHasher.HashPassword(novoUsuario, userDto.Password);
 
-            // 4. Salvamos
             context.Users.Add(novoUsuario);
             await context.SaveChangesAsync();
             return novoUsuario;
