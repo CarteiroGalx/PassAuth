@@ -33,10 +33,10 @@ PassAuth/
 ```
 
 ## 🔍Como rodar o projeto
-- Primeiro de tudo, copie o reposítorio em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
+- Primeiro de tudo, use `git copy <URL do projeto>` em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
 - Depois, navegue é a pasta raiz do projeto
-- Digite "dotnet run" e aguarde a aplicação funcionar.
-- Após isso, poderá começar a testar os métodos do AuthController!
+- Digite `dotnet run` e aguarde a aplicação inicializar.
+- Após isso, poderá começar a testar o sistema!
   
 ## ❌Fraquezas / Incapacidades
 - Só uma única conta é suportada, a qual fica armazenada na memória da máquina. Após registrar uma outra conta, a anterior é totalmente substituída.
