@@ -39,9 +39,11 @@ PassAuth/
 - Após isso, poderá começar a testar o sistema!
   
 ## ❌Fraquezas / Incapacidades
-- Só uma única conta é suportada, a qual fica armazenada na memória da máquina. Após registrar uma outra conta, a anterior é totalmente substituída.
-- Não há uma UI agradável para usuários comuns.
-- Os testes de Login e Registro são totalmente manuais, tendo que "ir e voltar" entre cada método.
+- Não há uma UI agradável para usuários comuns
+- Tanto **UserController** quanto **AuthController** podem criar um novo usuário, e são pratiamente iguais
+- Não há nenhuma validação de usuário. Um usuário pode digitar qualquer nome estranho, incluindo a senha
+- Qualquer usuário pode alterar a própria Role na criação da conta
+- Os testes de Login e Registro são totalmente manuais, tendo que "ir e voltar" entre cada método
   
 ## ⭐Melhorias futuras
 - Implementação de um banco de dados para multiplas contas poderem existir sem que haja "atropelamentos"
