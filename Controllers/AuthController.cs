@@ -40,21 +40,21 @@ namespace PassAuth.Controllers
             return StatusCode(201, response);
         }
 
-        //[HttpPost("login")]
-        //public ActionResult<string> Login(UserDto request)
-        //{
-        //    if (user.Username != request.Username)
-        //    {
-        //        return Unauthorized("Invalid username or password.");
-        //    }
+        [HttpPost("login")]
+        public ActionResult<string> Login(UserDto request)
+        {
+           if (user.Username != request.Username)
+           {
+                return Unauthorized("Invalid username or password.");
+           }
 
-        //    var hasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            var hasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password);
 
-        //    if (hasher == PasswordVerificationResult.Failed)
-        //    {
-        //        return Unauthorized("Invalid username or password.");
-        //    }
-        //    return Ok("Login successful.");
-        //}
+            if (hasher == PasswordVerificationResult.Failed)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+            return Ok("Login successful.");
+        }
     }
 }
