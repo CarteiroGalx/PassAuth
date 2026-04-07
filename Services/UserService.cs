@@ -15,7 +15,7 @@ namespace PassAuth.Services
             this.context = context;
         }
 
-        public async Task<User> AddAsync(UserDto userDto, string plainPass)
+        public async Task<User> AddAsync(UserRegisterDto userDto, string plainPass)
         {
             var novoUsuario = new User
             {

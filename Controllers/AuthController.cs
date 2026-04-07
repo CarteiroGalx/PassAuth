@@ -19,7 +19,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserDto request)
+        public async Task<ActionResult> Register(UserRegisterDto request)
         {
             var newUser = new User
             {
@@ -41,16 +41,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<string> Login(UserDto request)
-        {
-           if (user.Username != request.Username)
-           {
-                return Unauthorized("Invalid username or password.");
-           }
-
-            var hasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password);
-
-            if (hasher == PasswordVerificationResult.Failed)
+        public ActionResult<string> Login(UserLoginDto request)
             {
                 return Unauthorized("Invalid username or password.");
             }

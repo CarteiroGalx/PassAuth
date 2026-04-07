@@ -58,7 +58,7 @@ namespace PassAuth.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserDto user)
+        public async Task<ActionResult<User>> PostUser(UserRegisterDto user)
         {
             var newUser = await service.AddAsync(user, user.Password);
 

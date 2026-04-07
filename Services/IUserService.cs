@@ -7,7 +7,7 @@ namespace PassAuth.Services
         Task<List<User>> GetAllAsync();
         Task<User?> GetByIdAsync(int id);
         Task<bool> UserExistsAsync(int id);
-        Task<User> AddAsync(UserDto user, string plainPass);
+        Task<User> AddAsync(UserRegisterDto user, string plainPass);
         Task UpdateAsync(User user);
         Task DeleteAsync(int id);
     }

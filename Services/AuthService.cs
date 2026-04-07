@@ -16,12 +16,22 @@ namespace PassAuth.Services
             this.context = context;
         }
 
-        public async Task<string> Login(UserDto request)
+        public async Task<string> Login(UserLoginDto request)
+        {
+            var user = context.Users.FirstOrDefaultAsync(x => x.Username == request.Username);
+            if (user.Username != request.Username)
+            {
+                return Unauthorized("Invalid username or password.");
+            }
+
+            var hasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password);
+
+            if (hasher == PasswordVerificationResult.Failed)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<UserResponseDto> Register(UserDto request)
+        public async Task<UserResponseDto> Register(UserRegisterDto request)
         {
             var newUser = new User
             {
