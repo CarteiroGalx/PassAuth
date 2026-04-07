@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PassAuth.Context;
+using PassAuth.Models.Enums;
 
 namespace PassAuth.Controllers
 {
@@ -22,7 +23,8 @@ namespace PassAuth.Controllers
         {
             var newUser = new User
             {
-                Username = request.Username
+                Username = request.Username,
+                Role = UserRole.User
             };
             var hasher = new PasswordHasher<User>();
             newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
