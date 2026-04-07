@@ -1,4 +1,4 @@
-﻿namespace PassAuth.DTOs
+﻿namespace PassAuth.DTOs.User
 {
     public class UserResponseDto
     {
