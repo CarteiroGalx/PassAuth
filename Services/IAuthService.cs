@@ -4,7 +4,7 @@ namespace PassAuth.Services
 {
     public interface IAuthService
     {
-        Task Register(UserDto request);
-        Task<bool> Login(UserDto request);
+        Task<UserResponseDto> Register(UserDto request);
+        Task<string> Login(UserDto request);
     }
 }
