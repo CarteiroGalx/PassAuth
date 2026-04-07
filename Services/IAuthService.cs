@@ -1,10 +1,10 @@
-﻿using PassAuth.DTOs;
+﻿using PassAuth.DTOs.User;
 
 namespace PassAuth.Services
 {
     public interface IAuthService
     {
-        Task<UserResponseDto> Register(UserDto request);
-        Task<string> Login(UserDto request);
+        Task<UserResponseDto> Register(UserRegisterDto request);
+        Task<string> Login(UserLoginDto request);
     }
 }
