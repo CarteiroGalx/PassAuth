@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Services;
 
@@ -12,8 +11,11 @@ namespace PassAuth
 
             // Add services to the container.
             builder.Services.AddDbContext<Context.AppDbContext>(options => 
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<IUserService, UserService>(); //Serviço registrado
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IUserService, UserService>(); 
+            builder.Services.AddScoped<IAuthService, AuthService>(); 
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +33,6 @@ namespace PassAuth
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
