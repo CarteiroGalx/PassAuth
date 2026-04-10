@@ -9,11 +9,11 @@ namespace PassAuth.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly AppDbContext context;
+        private readonly AppDbContext _context;
 
         public AuthService(AppDbContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public async Task<string> Login(UserLoginDto request)
