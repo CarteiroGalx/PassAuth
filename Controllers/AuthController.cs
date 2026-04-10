@@ -1,10 +1,11 @@
-﻿using PassAuth.DTOs;
-using PassAuth.Models;
+﻿using PassAuth.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PassAuth.Context;
 using PassAuth.Models.Enums;
+using PassAuth.DTOs.User;
+using PassAuth.Services;
 
 namespace PassAuth.Controllers
 {
@@ -12,40 +13,30 @@ namespace PassAuth.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public AuthController(AppDbContext context)
+        private readonly IAuthService _service;
+        public AuthController(IAuthService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult> Register(UserRegisterDto request)
         {
-            var newUser = new User
+            try
             {
-                Username = request.Username,
-                Role = UserRole.User
-            };
-            var hasher = new PasswordHasher<User>();
-            newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-            var response = new
+                var response = await _service.Register(request);
+                return Ok(response);
+            }
+            catch(InvalidOperationException ex)
             {
-                id = newUser.Id,
-                username = newUser.Username,
-                response = "Usuário resgistrado com sucesso!"
-            };
-
-            return StatusCode(201, response);
+                return Conflict(new { message = ex.Message  });
+            }
         }
 
         [HttpPost("login")]
         public ActionResult<string> Login(UserLoginDto request)
-            {
-                return Unauthorized("Invalid username or password.");
-            }
-            return Ok("Login successful.");
+        {
+            throw new NotImplementedException();
         }
     }
 }
