@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PassAuth.DTOs;
+using PassAuth.DTOs.User;
 using PassAuth.Models;
 using PassAuth.Services;
 
