@@ -33,9 +33,22 @@ namespace PassAuth.Services
 
         public async Task<UserResponseDto> Register(UserRegisterDto request)
         {
+            bool usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
+            if (usernameExists)
+            {
+                throw new InvalidOperationException("Nome de Usuário já existe");
+            }
+
+            bool emailExists = await _context.Users.AnyAsync(e => e.Email == request.Email);
+            if (emailExists)
+            {
+                throw new InvalidOperationException("E-mail já existe");
+            }
+
             var newUser = new User
             {
                 Username = request.Username,
+                Email = request.Email,
                 Role = UserRole.User
             };
 
@@ -43,14 +56,15 @@ namespace PassAuth.Services
 
             newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
 
-            context.Users.Add(newUser);
+            _context.Users.Add(newUser);
 
             var response = new UserResponseDto
             {
                 Username = request.Username,
+                Email = request.Email
             };
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return response;
         }
     }
