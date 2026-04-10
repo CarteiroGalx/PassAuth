@@ -2,7 +2,7 @@
 
 namespace PassAuth.DTOs.User
 {
-    public class UserLoginDto
+    public class UserLoginRequest
     {
         [Required(ErrorMessage = "O nome de usuário é obrigatório.")]
         [StringLength(20, MinimumLength = 3)]
