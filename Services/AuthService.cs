@@ -33,9 +33,9 @@ namespace PassAuth.Services
 
             var response = new UserResponse
             {
-                Id = user.Id,
                 Username = user.Username,
-                Email = user.Email
+                Email = user.Email,
+                Role = user.Role
             };
 
             return response;
