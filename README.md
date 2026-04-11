@@ -32,6 +32,13 @@ PassAuth/
 └── Program.cs
 ```
 
+## 🔗Controladores e Serviços: suas funções no projeto
+### Auth
+Sua principal e única função é validar e autenticar acessos ao sistema através do Registro e Login. É a **estrela** do projeto, já que foca totalmente na segurança assim como a proposta principal deste projeto. 
+
+### Users
+Para acesso restrito a usuários com uma Role de Admin (administrador), sendo o cargo total do sistema. Pode ver informações de cada usuário como nome, email e ID, mas a senha está protegida com hash por questões de segurança. Pode também promover outros Users para Managers ou fazer o inverso, além de suspender contas, deletar e etc. Mesmo quem tenha acesso ao Controller, ainda é impossibilitado de roubar senhas de usuários para más intenções.
+
 ## 🔍Como rodar o projeto
 - Primeiro de tudo, use `git copy <URL do projeto>` em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
 - Depois, navegue é a pasta raiz do projeto
