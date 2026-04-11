@@ -41,8 +41,6 @@ PassAuth/
 ## ❌Fraquezas / Incapacidades
 - Não há uma UI agradável para usuários comuns
 - Tanto **UserController** quanto **AuthController** podem criar um novo usuário, e são pratiamente iguais
-- Não há nenhuma validação de usuário. Um usuário pode digitar qualquer nome estranho, incluindo a senha
-- Qualquer usuário pode alterar a própria Role na criação da conta
 - Os testes de Login e Registro são totalmente manuais, tendo que "ir e voltar" entre cada método
   
 ## ⭐Melhorias futuras
