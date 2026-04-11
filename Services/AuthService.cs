@@ -18,17 +18,27 @@ namespace PassAuth.Services
 
         public async Task<UserResponse> Login(UserLoginRequest request)
         {
-            var user = context.Users.FirstOrDefaultAsync(x => x.Username == request.Username);
-            if (user.Username != request.Username)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null)
             {
-                return Unauthorized("Invalid username or password.");
+                throw new InvalidOperationException("Nome de usuário ou senha inválidos");
             }
 
-            var hasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            var hasher = new PasswordHasher<User>();
+            var verification = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            if (verification == PasswordVerificationResult.Failed)
+            {
+                throw new InvalidOperationException("Nome de usuário ou senha inválidos");
+            }
 
-            if (hasher == PasswordVerificationResult.Failed)
+            var response = new UserResponse
         {
-            throw new NotImplementedException();
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email
+            };
+
+            return response;
         }
 
         public async Task<UserResponse> Register(UserRegisterRequest request)
