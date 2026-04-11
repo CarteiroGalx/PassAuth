@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
-using PassAuth.DTOs;
+using PassAuth.DTOs.User;
 using PassAuth.Models;
 namespace PassAuth.Services
 {
