@@ -1,4 +1,4 @@
-﻿using PassAuth.DTOs;
+﻿using PassAuth.DTOs.User;
 using PassAuth.Models;
 namespace PassAuth.Services
 {
