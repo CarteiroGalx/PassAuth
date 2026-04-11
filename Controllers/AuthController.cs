@@ -36,7 +36,15 @@ namespace PassAuth.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserLoginRequest request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _service.Login(request);
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }
