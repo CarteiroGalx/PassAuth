@@ -32,7 +32,7 @@ namespace PassAuth.Services
             }
 
             var response = new UserResponse
-        {
+            {
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email
@@ -43,13 +43,13 @@ namespace PassAuth.Services
 
         public async Task<UserResponse> Register(UserRegisterRequest request)
         {
-            bool usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
+            var usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
             if (usernameExists)
             {
                 throw new InvalidOperationException("Nome de Usuário já existe");
             }
 
-            bool emailExists = await _context.Users.AnyAsync(e => e.Email == request.Email);
+            var emailExists = await _context.Users.AnyAsync(e => e.Email == request.Email);
             if (emailExists)
             {
                 throw new InvalidOperationException("E-mail já existe");
@@ -68,7 +68,7 @@ namespace PassAuth.Services
 
             _context.Users.Add(newUser);
 
-            var response = new UserResponseDto
+            var response = new UserResponse
             {
                 Username = request.Username,
                 Email = request.Email
