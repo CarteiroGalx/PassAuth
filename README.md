@@ -46,8 +46,6 @@ PassAuth/
 - Os testes de Login e Registro são totalmente manuais, tendo que "ir e voltar" entre cada método
   
 ## ⭐Melhorias futuras
-- Adicionar validação de usuário, validando o nome e a senha
-- Revisar segurança nas Roles de usuários, fazendo com que sejam apenas Users no momento que criados
 - Apenas um Admin poder promover outros Users para serem Managers, mas nunca Admins
 - Um Manager poder suspender um User, mas não deletar
 - Apenas um Admin poder suspender/deletar um Manager ou User, estando no topo de hierarquia
