@@ -16,7 +16,7 @@ namespace PassAuth.Services
             _context = context;
         }
 
-        public async Task<string> Login(UserLoginDto request)
+        public async Task<UserResponse> Login(UserLoginRequest request)
         {
             var user = context.Users.FirstOrDefaultAsync(x => x.Username == request.Username);
             if (user.Username != request.Username)
@@ -31,7 +31,7 @@ namespace PassAuth.Services
             throw new NotImplementedException();
         }
 
-        public async Task<UserResponseDto> Register(UserRegisterDto request)
+        public async Task<UserResponse> Register(UserRegisterRequest request)
         {
             bool usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
             if (usernameExists)

@@ -20,7 +20,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegisterDto request)
+        public async Task<ActionResult> Register(UserRegisterRequest request)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<string> Login(UserLoginDto request)
+        public async Task<ActionResult<string>> Login(UserLoginRequest request)
         {
             throw new NotImplementedException();
         }
