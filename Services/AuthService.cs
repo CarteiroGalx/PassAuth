@@ -94,7 +94,8 @@ namespace PassAuth.Services
             var response = new UserResponse
             {
                 Username = request.Username,
-                Email = request.Email
+                Email = request.Email,
+                Role = UserRole.User
             };
 
             await _context.SaveChangesAsync();
