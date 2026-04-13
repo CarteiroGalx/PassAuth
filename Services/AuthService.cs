@@ -4,6 +4,7 @@ using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using System.Security.Cryptography;
 
 namespace PassAuth.Services
 {
@@ -98,6 +99,16 @@ namespace PassAuth.Services
 
             await _context.SaveChangesAsync();
             return response;
+        }
+        public string GenerateSecurePassword(int length = 12)
+        {
+            char[] characters = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@#$%&*".ToCharArray();
+
+            Span<char> result = stackalloc char[length];
+
+            RandomNumberGenerator.GetItems(characters.AsSpan(), result);
+
+            return new string(result);
         }
     }
 }

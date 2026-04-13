@@ -6,5 +6,6 @@ namespace PassAuth.Services
     {
         Task<UserResponse> Register(UserRegisterRequest request);
         Task<string> Login(UserLoginRequest request);
+        string GenerateSecurePassword(int length = 12);
     }
 }
