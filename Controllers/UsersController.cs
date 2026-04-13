@@ -20,18 +20,16 @@ namespace PassAuth.Controllers
             _authService = authService;
         }
 
-        // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await service.GetAllAsync();
+            return await _userService.GetAllAsync();
         }
 
-        // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await service.GetByIdAsync(id);
+            var user = await _userService.GetByIdAsync(id);
 
             if (user == null)
             {
@@ -41,8 +39,6 @@ namespace PassAuth.Controllers
             return user;
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -50,7 +46,7 @@ namespace PassAuth.Controllers
 
             try
             {
-                await service.UpdateAsync(user);
+                await _userService.UpdateAsync(user);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -59,8 +55,6 @@ namespace PassAuth.Controllers
             }
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserCreateAdminRequest user)
         {
@@ -81,13 +75,12 @@ namespace PassAuth.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
-        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                await service.DeleteAsync(id);
+                await _userService.DeleteAsync(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
