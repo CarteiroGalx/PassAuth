@@ -10,13 +10,15 @@ namespace PassAuth.Services
     public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(AppDbContext context)
+        public AuthService(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
-        public async Task<UserResponse> Login(UserLoginRequest request)
+        public async Task<string> Login(UserLoginRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (user == null)
@@ -31,14 +33,34 @@ namespace PassAuth.Services
                 throw new InvalidOperationException("Nome de usuário ou senha inválidos");
             }
 
-            var response = new UserResponse
+            var claims = new[]
             {
-                Username = user.Username,
-                Email = user.Email,
-                Role = user.Role
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Username),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, user.Email),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Role.ToString())
             };
 
-            return response;
+            var key = _configuration["Jwt:Key"];
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            if (string.IsNullOrEmpty(key)) throw new InvalidOperationException("JWT key not configured");
+
+            var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
+            var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(5),
+                signingCredentials: credentials
+            );
+
+            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var tokenString = tokenHandler.WriteToken(tokenDescriptor);
+
+            return tokenString;
         }
 
         public async Task<UserResponse> Register(UserRegisterRequest request)
