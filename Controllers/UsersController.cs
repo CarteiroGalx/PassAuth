@@ -11,11 +11,13 @@ namespace PassAuth.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService service;
+        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public UsersController(IUserService service)
+        public UsersController(IUserService userService, IAuthService authService)
         {
-            this.service = service;
+            _userService = userService;
+            _authService = authService;
         }
 
         // GET: api/Users
@@ -60,14 +62,20 @@ namespace PassAuth.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserRegisterRequest user)
+        public async Task<ActionResult<User>> PostUser(UserCreateAdminRequest user)
         {
-            var newUser = await service.AddAsync(user, user.Password);
+            var temporaryPass = _authService.GenerateSecurePassword();
+            var newUser = await _userService.AddAsync(user, temporaryPass);
 
             var userResponse = new
             {
                 id = newUser.Id,
-                userName = newUser.Username
+                userName = newUser.Username,
+                email = newUser.Email,
+                role = newUser.Role,
+                password = temporaryPass,
+                message = "IMPORTANTE: Em produção, esta senha seria enviada por e-mail. " +
+                            "Exibida aqui apenas para facilitar testes da API."
             };
 
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);

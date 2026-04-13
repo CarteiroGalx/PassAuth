@@ -10,21 +10,22 @@ namespace PassAuth.Services
     {
         private readonly AppDbContext context;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, IAuthService authService)
         {
             this.context = context;
         }
 
-        public async Task<User> AddAsync(UserRegisterRequest userDto, string plainPass)
+        public async Task<User> AddAsync(UserCreateAdminRequest userDto, string plainPass)
         {
             var novoUsuario = new User
             {
-                Username = userDto.Username
+                Username = userDto.Username,
+                Email = userDto.Email,
+                Role = userDto.Role,
             };
+            var hasher = new PasswordHasher<User>();
 
-            var passwordHasher = new PasswordHasher<User>();
-
-            novoUsuario.PasswordHash = passwordHasher.HashPassword(novoUsuario, userDto.Password);
+            novoUsuario.PasswordHash = hasher.HashPassword(novoUsuario, plainPass);
 
             context.Users.Add(novoUsuario);
             await context.SaveChangesAsync();
