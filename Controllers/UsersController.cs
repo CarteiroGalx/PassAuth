@@ -56,7 +56,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(CreateAdminRequest user)
+        public async Task<ActionResult<User>> PostUser(CreateUserRequest user)
         {
             var temporaryPass = _authService.GenerateSecurePassword();
             var newUser = await _userService.AddAsync(user, temporaryPass);
