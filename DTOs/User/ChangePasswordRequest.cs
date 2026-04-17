@@ -9,7 +9,7 @@ namespace PassAuth.DTOs.User
         [Required(ErrorMessage = "A nova senha é obrigatória")]
         public string NewPassword { get; set; }
         [Required(ErrorMessage = "Digite a senha de confirmação")]
-        [Compare("ActualPass", ErrorMessage = "As senhas não coincidem")]
+        [Compare("CurrentPassword", ErrorMessage = "As senhas não coincidem")]
         public string ConfirmationPassword { get; set; }
     }
 }
