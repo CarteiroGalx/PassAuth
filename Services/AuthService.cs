@@ -64,7 +64,7 @@ namespace PassAuth.Services
             return tokenString;
         }
 
-        public async Task<Response> Register(RegisterRequest request)
+        public async Task<ProfileResponse> Register(RegisterRequest request)
         {
             var usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
             if (usernameExists)
@@ -91,7 +91,7 @@ namespace PassAuth.Services
 
             _context.Users.Add(newUser);
 
-            var response = new Response
+            var response = new ProfileResponse
             {
                 Username = request.Username,
                 Email = request.Email,

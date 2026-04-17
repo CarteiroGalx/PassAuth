@@ -2,7 +2,7 @@
 
 namespace PassAuth.DTOs.User
 {
-    public class Response
+    public class ProfileResponse
     {
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
