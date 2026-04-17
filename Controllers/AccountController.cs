@@ -39,5 +39,27 @@ namespace PassAuth.Controllers
 
             return Ok(user);
         }
+
+
+        [HttpPost("changepassword")]
+        public async Task<ActionResult> ChangePass(string newPass)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Unauthorized();
+            }
+
+            var id = int.Parse(userIdClaim);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            var hasher = new PasswordHasher<User>();
+            user.PasswordHash = hasher.HashPassword(user, newPass);
+            await _context.SaveChangesAsync();
+
+            return Ok(user.PasswordHash);
+        }
     }
 }
