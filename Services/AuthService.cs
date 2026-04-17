@@ -19,7 +19,7 @@ namespace PassAuth.Services
             _configuration = configuration;
         }
 
-        public async Task<string> Login(UserLoginRequest request)
+        public async Task<string> Login(LoginRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (user == null)
@@ -64,7 +64,7 @@ namespace PassAuth.Services
             return tokenString;
         }
 
-        public async Task<UserResponse> Register(UserRegisterRequest request)
+        public async Task<Response> Register(RegisterRequest request)
         {
             var usernameExists = await _context.Users.AnyAsync(u => u.Username == request.Username);
             if (usernameExists)
@@ -91,7 +91,7 @@ namespace PassAuth.Services
 
             _context.Users.Add(newUser);
 
-            var response = new UserResponse
+            var response = new Response
             {
                 Username = request.Username,
                 Email = request.Email,

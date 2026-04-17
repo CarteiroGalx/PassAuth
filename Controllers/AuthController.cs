@@ -20,7 +20,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegisterRequest request)
+        public async Task<ActionResult> Register(RegisterRequest request)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserLoginRequest request)
+        public async Task<ActionResult<string>> Login(LoginRequest request)
         {
             try
             {

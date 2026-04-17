@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PassAuth.DTOs.User
 {
-    public class UserCreatedResponse : UserBaseRequest
+    public class CreateAdminRequest : BaseRequest
     {
-        public int Id { get; set; }
+        [Required(ErrorMessage = "O cargo é obrigatório")]
         public UserRole Role { get; set; }
-        public string Password {  get; set; } = string.Empty;
     }
 }

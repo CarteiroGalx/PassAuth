@@ -4,8 +4,8 @@ namespace PassAuth.Services
 {
     public interface IAuthService
     {
-        Task<UserResponse> Register(UserRegisterRequest request);
-        Task<string> Login(UserLoginRequest request);
+        Task<Response> Register(RegisterRequest request);
+        Task<string> Login(LoginRequest request);
         string GenerateSecurePassword(int length = 12);
     }
 }
