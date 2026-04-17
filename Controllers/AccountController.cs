@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
+using PassAuth.DTOs.User;
 using PassAuth.Models;
 using System.Security.Claims;
 
@@ -42,7 +43,7 @@ namespace PassAuth.Controllers
 
 
         [HttpPatch("me/changepassword")]
-        public async Task<ActionResult> ChangePass(string actualPass, string newPass, string confirmPass)
+        public async Task<ActionResult> ChangePass([FromBody] ChangePasswordRequest dto)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -54,20 +55,19 @@ namespace PassAuth.Controllers
             var id = int.Parse(userIdClaim);
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
             var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, actualPass);
+            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, dto.CurrentPassword);
 
             if(result == PasswordVerificationResult.Failed)
                 return Unauthorized(new { message = "Senha atual inválida!"});
-            if (newPass != confirmPass)
+            if (dto.NewPassword != dto.ConfirmationPassword)
                 return Conflict(new { message = "As senhas não coincidem!"});
 
-            user.PasswordHash = hasher.HashPassword(user, newPass);
+            user.PasswordHash = hasher.HashPassword(user, dto.NewPassword);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(dto);
         }
     }
 }
