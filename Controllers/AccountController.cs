@@ -67,7 +67,7 @@ namespace PassAuth.Controllers
             user.PasswordHash = hasher.HashPassword(user, newPass);
             await _context.SaveChangesAsync();
 
-            return Ok(user.PasswordHash);
+            return Ok();
         }
     }
 }
