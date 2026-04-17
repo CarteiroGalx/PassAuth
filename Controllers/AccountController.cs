@@ -61,8 +61,6 @@ namespace PassAuth.Controllers
 
             if(result == PasswordVerificationResult.Failed)
                 return Unauthorized(new { message = "Senha atual inválida!"});
-            if (dto.NewPassword != dto.ConfirmationPassword)
-                return Conflict(new { message = "As senhas não coincidem!"});
 
             user.PasswordHash = hasher.HashPassword(user, dto.NewPassword);
             await _context.SaveChangesAsync();
