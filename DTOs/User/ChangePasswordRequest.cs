@@ -6,8 +6,11 @@ namespace PassAuth.DTOs.User
     {
         [Required(ErrorMessage = "A senha atual é obrigatória")]
         public string CurrentPassword { get; set; }
+
         [Required(ErrorMessage = "A nova senha é obrigatória")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "A senha deve ter pelo menos 6 caractéres")]
         public string NewPassword { get; set; }
+
         [Required(ErrorMessage = "Digite a senha de confirmação")]
         [Compare("CurrentPassword", ErrorMessage = "As senhas não coincidem")]
         public string ConfirmationPassword { get; set; }
