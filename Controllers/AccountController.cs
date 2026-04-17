@@ -42,7 +42,7 @@ namespace PassAuth.Controllers
 
 
         [HttpPatch("me/changepassword")]
-        public async Task<ActionResult> ChangePass(string newPass)
+        public async Task<ActionResult> ChangePass(string actualPass, string newPass, string confirmPass)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -55,7 +55,15 @@ namespace PassAuth.Controllers
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
+            if(user == null) return NotFound();
             var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, actualPass);
+
+            if(result == PasswordVerificationResult.Failed)
+                return Unauthorized(new { message = "Senha atual inválida!"});
+            if (newPass != confirmPass)
+                return Conflict(new { message = "As senhas não coincidem!"});
+
             user.PasswordHash = hasher.HashPassword(user, newPass);
             await _context.SaveChangesAsync();
 
