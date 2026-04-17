@@ -41,7 +41,7 @@ namespace PassAuth.Controllers
         }
 
 
-        [HttpPost("changepassword")]
+        [HttpPatch("me/changepassword")]
         public async Task<ActionResult> ChangePass(string newPass)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
