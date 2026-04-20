@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PassAuth.DTOs.User
 {
-    public class CreatedResponse : BaseRequest
+    public class CreatedResponse : BaseRequestUser
     {
         public int Id { get; set; }
         public UserRole Role { get; set; }
