@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PassAuth.Models
 {
-    public class Request
+    public class ManagerRequest
     {
         [Key]
         public int Id { get; set; }
@@ -13,6 +13,6 @@ namespace PassAuth.Models
         [Required]
         public RequestStatus Status { get; set; }
         [MaxLength(500, ErrorMessage = "Máximo de caracteres é de 500")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

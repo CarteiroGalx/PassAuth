@@ -19,9 +19,9 @@ namespace PassAuth.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Request>> Post([FromBody] Request request)
+        public async Task<ActionResult<ManagerRequest>> Post([FromBody] ManagerRequest request)
         { 
-            var newRequest = new Request
+            var newRequest = new ManagerRequest
             {
                 Title = request.Title,
                 Description = request.Description,
