@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Services;
 using System.Security.Claims;
 
 namespace PassAuth.Controllers
@@ -15,11 +12,11 @@ namespace PassAuth.Controllers
     [Authorize]
     public class AccountController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAccountService _service;
 
-        public AccountController(AppDbContext context)
+        public AccountController(IAccountService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet("me")]
@@ -32,15 +29,17 @@ namespace PassAuth.Controllers
                 return Unauthorized();
             }
 
-            var id = int.Parse(userIdClaim);
+            if (!int.TryParse(userIdClaim, out var id))
+            {
+                return Unauthorized();
+            }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _service.GetByIdAsync(id);
 
             if (user == null) return NotFound();
 
             return Ok(user);
         }
-
 
         [HttpPatch("me/changepassword")]
         public async Task<ActionResult> ChangePass([FromBody] ChangePasswordRequest dto)
@@ -52,20 +51,24 @@ namespace PassAuth.Controllers
                 return Unauthorized();
             }
 
-            var id = int.Parse(userIdClaim);
+            if (!int.TryParse(userIdClaim, out var id))
+            {
+                return Unauthorized();
+            }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null) return NotFound();
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, dto.CurrentPassword);
-
-            if(result == PasswordVerificationResult.Failed)
-                return Unauthorized(new { message = "Senha atual inválida!"});
-
-            user.PasswordHash = hasher.HashPassword(user, dto.NewPassword);
-            await _context.SaveChangesAsync();
-
-            return Ok(dto);
+            try
+            {
+                await _service.ChangePasswordAsync(id, dto);
+                return Ok(dto);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex) 
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
     }
 }
