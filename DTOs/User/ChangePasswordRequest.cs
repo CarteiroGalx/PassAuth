@@ -12,7 +12,7 @@ namespace PassAuth.DTOs.User
         public string NewPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Digite a senha de confirmação")]
-        [Compare("CurrentPassword", ErrorMessage = "As senhas não coincidem")]
+        [Compare("NewPassword", ErrorMessage = "As senhas não coincidem")]
         public string ConfirmationPassword { get; set; } = string.Empty;
     }
 }
