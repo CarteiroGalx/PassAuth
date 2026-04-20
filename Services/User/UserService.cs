@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
-namespace PassAuth.Services
+using PassAuth.Services.Auth;
+namespace PassAuth.Services.User
 {
     public class UserService : IUserService
     {

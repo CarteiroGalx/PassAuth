@@ -4,7 +4,7 @@ using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
 
-namespace PassAuth.Services
+namespace PassAuth.Services.Account
 {
     public class AccountService : IAccountService
     {

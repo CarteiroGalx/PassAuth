@@ -1,6 +1,6 @@
 ﻿using PassAuth.DTOs.User;
 
-namespace PassAuth.Services
+namespace PassAuth.Services.Auth
 {
     public interface IAuthService
     {
