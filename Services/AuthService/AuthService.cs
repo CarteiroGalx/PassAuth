@@ -6,7 +6,8 @@ using PassAuth.Models;
 using PassAuth.Models.Enums;
 using System.Security.Cryptography;
 
-namespace PassAuth.Services.Auth
+
+namespace PassAuth.Services.AuthService
 {
     public class AuthService : IAuthService
     {

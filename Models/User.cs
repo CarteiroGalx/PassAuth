@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PassAuth.Models.Enums;
 using System.ComponentModel.DataAnnotations;
+
 namespace PassAuth.Models
 {
     [Index(nameof(Username), IsUnique = true)]
