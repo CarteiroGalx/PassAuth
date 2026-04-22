@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PassAuth.Services.AccountService;
-using PassAuth.Services.AuthService;
-using PassAuth.Services.UserService;
+using PassAuth.Services;
 using System.Text;
 
 namespace PassAuth
