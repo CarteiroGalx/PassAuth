@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PassAuth.DTOs.Request
 {
-    public class BaseManagerRequest
+    public abstract class BaseManagerRequest
     {
         [Required(ErrorMessage = "O título é obrigatório")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "Título deve estar entre 3 a 20 caracteres")]
