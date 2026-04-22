@@ -4,10 +4,11 @@ using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using PassAuth.Services.Interfaces;
 using System.Security.Cryptography;
 
 
-namespace PassAuth.Services.AuthService
+namespace PassAuth.Services
 {
     public class AuthService : IAuthService
     {

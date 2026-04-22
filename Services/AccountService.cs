@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Services.Interfaces;
 
-namespace PassAuth.Services.AccountService
+namespace PassAuth.Services
 {
     public class AccountService : IAccountService
     {
