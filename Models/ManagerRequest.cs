@@ -14,5 +14,7 @@ namespace PassAuth.Models
         public RequestStatus Status { get; set; }
         [MaxLength(500, ErrorMessage = "Máximo de caracteres é de 500")]
         public string Description { get; set; } = string.Empty;
+        [Required]
+        public string Author { get; set; } = string.Empty;
     }
 }
