@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
 using PassAuth.DTOs.Request;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using System.Security.Claims;
 
 namespace PassAuth.Controllers
 {
@@ -22,11 +24,17 @@ namespace PassAuth.Controllers
         [HttpPost]
         public async Task<ActionResult<ManagerRequest>> Post([FromBody] CreateRequestDto request)
         { 
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+                return Unauthorized();
+
             var newRequest = new ManagerRequest
             {
                 Title = request.Title,
                 Description = request.Description,
-                Status = RequestStatus.Pending
+                Status = RequestStatus.Pending,
+                Author = userName
             };
 
             var response = new RequestResponseDto
