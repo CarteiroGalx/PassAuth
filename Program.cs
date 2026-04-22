@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PassAuth.Context;
+using PassAuth.Models;
+using PassAuth.Models.Enums;
 using PassAuth.Services;
 using PassAuth.Services.Interfaces;
 using System.Text;
@@ -72,6 +76,33 @@ namespace PassAuth
 
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var db = services.GetRequiredService<AppDbContext>();
+
+                    // If there are no users, create a default admin user
+                    if (!db.Users.Any())
+                    {
+                        var hasher = new PasswordHasher<User>();
+                        var admin = new User
+                        {
+                            Username = "Admin",
+                            Email = "admin@local",
+                            Role = UserRole.Admin
+                        };
+
+                        // Default password for prototyping. Change in production!
+                        admin.PasswordHash = hasher.HashPassword(admin, "123456");
+                        db.Users.Add(admin);
+                        db.SaveChanges();
+                    }
+                }
+                catch{}
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
