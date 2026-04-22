@@ -23,7 +23,7 @@ namespace PassAuth.Controllers
 
         [HttpPost]
         public async Task<ActionResult<ManagerRequest>> Post([FromBody] CreateRequestDto request)
-        { 
+        {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
 
             if (string.IsNullOrEmpty(userName))
@@ -48,6 +48,12 @@ namespace PassAuth.Controllers
             await _context.SaveChangesAsync();
 
             return Created($"/api/requests/{response.Id}", response);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<ManagerRequest>>> GetAll()
+        {
+            return await _context.Requests.AsNoTracking().ToListAsync();
         }
     }
 }
