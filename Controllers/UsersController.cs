@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
-using PassAuth.Services.AuthService;
-using PassAuth.Services.UserService;
+using PassAuth.Services.Interfaces;
 
 namespace PassAuth.Controllers
 {

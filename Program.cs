@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PassAuth.Services;
+using PassAuth.Services.Interfaces;
 using System.Text;
 
 namespace PassAuth
