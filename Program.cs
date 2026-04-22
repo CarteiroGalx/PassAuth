@@ -9,6 +9,7 @@ using PassAuth.Models.Enums;
 using PassAuth.Services;
 using PassAuth.Services.Interfaces;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PassAuth
 {
@@ -65,13 +66,18 @@ namespace PassAuth
                     }
                 });
             });
+            
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // Transforma Enums em Strings no JSON e no Swagger
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
 
