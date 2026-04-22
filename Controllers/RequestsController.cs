@@ -55,5 +55,15 @@ namespace PassAuth.Controllers
         {
             return await _context.Requests.AsNoTracking().ToListAsync();
         }
+
+        [HttpPatch]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ManagerRequest>> Validate(int id, RequestStatus decision)
+        {
+            var targetRequest = await _context.Requests.FindAsync(id);
+            targetRequest.Status = decision;
+            await _context.SaveChangesAsync();
+            return Ok(targetRequest);
+        }
     }
 }
