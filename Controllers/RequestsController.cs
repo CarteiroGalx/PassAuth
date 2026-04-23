@@ -57,6 +57,21 @@ namespace PassAuth.Controllers
             return await _context.Requests.AsNoTracking().ToListAsync();
         }
 
+        [HttpGet("get-my-requests")]
+        public async Task<ActionResult<List<ManagerRequest>>> GetMyRequests()
+        {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if(string.IsNullOrEmpty(authorName)) return Unauthorized();
+
+            var requests = await _context.Requests
+                .Where(u => u.Author == authorName)
+                .ToListAsync();
+
+            if(requests.Count == 0) return NoContent();
+            return Ok(requests);
+        }
+
         [HttpPatch]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ManagerRequest>> Validate(int id, RequestStatus decision)
