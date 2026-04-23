@@ -51,6 +51,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ManagerRequest>>> GetAll()
         {
             return await _context.Requests.AsNoTracking().ToListAsync();
