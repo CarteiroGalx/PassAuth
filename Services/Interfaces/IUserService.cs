@@ -1,5 +1,6 @@
 ﻿using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Models.Enums;
 namespace PassAuth.Services.Interfaces
 {
     public interface IUserService
@@ -9,6 +10,7 @@ namespace PassAuth.Services.Interfaces
         Task<bool> UserExistsAsync(int id);
         Task<User> AddAsync(CreateUserRequest user, string plainPass);
         Task UpdateAsync(User user);
+        Task PromoteAsync(int id, UserRole role);
         Task DeleteAsync(int id);
     }
 }

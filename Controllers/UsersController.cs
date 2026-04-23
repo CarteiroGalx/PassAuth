@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Models.Enums;
 using PassAuth.Services.Interfaces;
 
 namespace PassAuth.Controllers
@@ -52,6 +53,24 @@ namespace PassAuth.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { error = ex.Message });
+            }
+        }
+
+        [HttpPatch("promote-user")]
+        public async Task<ActionResult> PromoteUser(int id, UserRole newRole)
+        {
+            try
+            {
+                await _userService.PromoteAsync(id, newRole);
+                return Ok();
+            }
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch(InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message});
             }
         }
 

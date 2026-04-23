@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PassAuth.Context;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Models.Enums;
 using PassAuth.Services.Interfaces;
 
 namespace PassAuth.Services
@@ -53,6 +54,21 @@ namespace PassAuth.Services
         public async Task<User?> GetByIdAsync(int id)
         {
             return await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task PromoteAsync(int id, UserRole role)
+        {
+            var user = await GetByIdAsync(id);
+            if (user == null)
+                throw new KeyNotFoundException("User not found");
+            
+
+            if (role == 0 )
+                throw new InvalidOperationException("Não pode promover para 'User'");
+            
+
+            user.Role = role;
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(User user)
