@@ -50,7 +50,7 @@ namespace PassAuth.Controllers
             return Created($"/api/requests/{response.Id}", response);
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ManagerRequest>>> GetAll()
         {
