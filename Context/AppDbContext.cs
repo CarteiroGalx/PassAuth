@@ -8,5 +8,6 @@ namespace PassAuth.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<ManagerRequest> Requests { get; set; }
+        public DbSet<AuditLog> Audit { get; set; }
     }
 }
