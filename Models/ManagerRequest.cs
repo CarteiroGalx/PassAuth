@@ -17,6 +17,8 @@ namespace PassAuth.Models
         [Required]
         public string Author { get; set; } = string.Empty;
         [Required]
+        public int AuthorId { get; set; }
+        [Required]
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow; 
         public DateTime? ReviewedAt { get; set; }  
         }
