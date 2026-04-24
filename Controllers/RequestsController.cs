@@ -5,6 +5,7 @@ using PassAuth.Context;
 using PassAuth.DTOs.Request;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using PassAuth.Services.Interfaces;
 using System.Security.Claims;
 
 namespace PassAuth.Controllers
@@ -14,59 +15,59 @@ namespace PassAuth.Controllers
     [Authorize(Roles = "Manager,Admin")]
     public class RequestsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IRequestService _service;
 
-        public RequestsController(AppDbContext context)
+        public RequestsController(IRequestService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpPost]
-        public async Task<ActionResult<ManagerRequest>> Post([FromBody] CreateRequestDto request)
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult<RequestResponseDto>> Post([FromBody] CreateRequestDto request)
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userName))
                 return Unauthorized();
 
-            var newRequest = new ManagerRequest
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Status = RequestStatus.Pending,
-                Author = userName
-            };
+            if (!int.TryParse(userId, out var id))
+                return BadRequest();
+
+            var created = await _service.CreateAsync(request, id, userName);
 
             var response = new RequestResponseDto
             {
-                Title = request.Title,
-                Description = request.Description,
-                Status = RequestStatus.Pending
+                Id = id,
+                Title = created.Title,
+                Description = created.Description,
+                Status = created.Status
             };
 
-            _context.Requests.Add(newRequest);
-            await _context.SaveChangesAsync();
-
-            return Created($"/api/requests/{response.Id}", response);
+            return Created();
         }
 
         [HttpGet("get-all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ManagerRequest>>> GetAll()
         {
-            return await _context.Requests.AsNoTracking().ToListAsync();
+            var list = await _service.GetAllAsync();
+            return Ok(list);
         }
 
         [HttpGet("get-my-requests")]
         public async Task<ActionResult<List<ManagerRequest>>> GetMyRequests()
         {
-            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if(string.IsNullOrEmpty(authorName)) return Unauthorized();
+            if (authorId == null)
+                return BadRequest();
 
-            var requests = await _context.Requests
-                .Where(u => u.Author == authorName)
-                .ToListAsync();
+            if (!int.TryParse(authorId, out var id))
+                return Unauthorized();
+
+            var requests = await _service.GetByIdAsync(id);
 
             if(requests.Count == 0) return NoContent();
             return Ok(requests);
@@ -76,10 +77,8 @@ namespace PassAuth.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ManagerRequest>> Validate(int id, RequestStatus decision)
         {
-            var targetRequest = await _context.Requests.FindAsync(id);
-            targetRequest.Status = decision;
-            await _context.SaveChangesAsync();
-            return Ok(targetRequest);
+            var updated = await _service.UpdateStatusAsync(id, decision);
+            return Ok(updated);
         }
     }
 }
