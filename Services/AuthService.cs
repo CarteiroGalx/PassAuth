@@ -113,5 +113,18 @@ namespace PassAuth.Services
 
             return new string(result);
         }
+
+        public Author ValidateAuthor(string id, string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException();
+            if (!int.TryParse(id, out var authorId)) throw new InvalidOperationException();
+            var author = new Author
+            {
+                Name = name,
+                Id = authorId
+            };
+
+            return author;
+        }
     }
 }
