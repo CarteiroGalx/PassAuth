@@ -11,6 +11,8 @@ namespace PassAuth.Models
         [Required]
         public string Author { get; set; } = string.Empty;
         [Required]
+        public int AuthorId { get; set; }
+        [Required]
         public string Description { get; set; } = string.Empty;
     }
 }
