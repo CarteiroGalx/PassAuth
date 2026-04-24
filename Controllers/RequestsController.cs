@@ -36,15 +36,6 @@ namespace PassAuth.Controllers
                 return BadRequest();
 
             var created = await _service.CreateAsync(request, id, userName);
-
-            var response = new RequestResponseDto
-            {
-                Id = id,
-                Title = created.Title,
-                Description = created.Description,
-                Status = created.Status
-            };
-
             return Created();
         }
 
