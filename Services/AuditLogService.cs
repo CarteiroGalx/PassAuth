@@ -16,7 +16,7 @@ namespace PassAuth.Services
 
         public async Task CreateAsync(AuditLog entity)
         {
-            entity.OccurredAt = DateTime.Now;
+            entity.OccurredAt = DateTime.UtcNow;
             _context.Audit.Add(entity);
             await _context.SaveChangesAsync();
         }
