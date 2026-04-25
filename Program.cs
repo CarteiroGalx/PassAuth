@@ -99,7 +99,6 @@ namespace PassAuth
                         var admin = new User
                         {
                             Username = "Admin",
-                            Email = "admin@local",
                             Role = UserRole.Admin
                         };
 

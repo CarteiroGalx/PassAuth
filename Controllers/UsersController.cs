@@ -208,7 +208,6 @@ namespace PassAuth.Controllers
             {
                 id = newUser.Id,
                 userName = newUser.Username,
-                email = newUser.Email,
                 role = newUser.Role,
                 password = temporaryPass,
                 message = "IMPORTANTE: Em produção, esta senha seria enviada por e-mail. " +

@@ -23,7 +23,6 @@ namespace PassAuth.Services
             var novoUsuario = new User
             {
                 Username = userDto.Username,
-                Email = userDto.Email,
                 Role = userDto.Role,
             };
             var hasher = new PasswordHasher<User>();

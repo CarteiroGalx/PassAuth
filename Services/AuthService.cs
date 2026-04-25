@@ -40,7 +40,6 @@ namespace PassAuth.Services
             {
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Username),
-                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, user.Email),
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Role.ToString())
             };
 
