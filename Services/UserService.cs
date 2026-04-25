@@ -13,7 +13,7 @@ namespace PassAuth.Services
     {
         private readonly AppDbContext context;
 
-        public UserService(AppDbContext context, IAuthService authService)
+        public UserService(AppDbContext context)
         {
             this.context = context;
         }
@@ -42,7 +42,7 @@ namespace PassAuth.Services
             {
                 throw new KeyNotFoundException("User not found");
             }
-            context.Users.Remove(user);
+            user.isActive = false;
             await context.SaveChangesAsync();
         }
 
