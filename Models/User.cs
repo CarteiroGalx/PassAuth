@@ -26,6 +26,6 @@ namespace PassAuth.Models
         public UserRole Role { get; set; }
 
         [Required]
-        public bool isActive { get; set; } 
+        public bool IsActive { get; set; } = true;
     }
 }
