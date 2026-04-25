@@ -5,6 +5,7 @@ using PassAuth.Context;
 using PassAuth.DTOs.Request;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using PassAuth.Services;
 using PassAuth.Services.Interfaces;
 using System.Security.Claims;
 
@@ -15,27 +16,45 @@ namespace PassAuth.Controllers
     [Authorize(Roles = "Manager,Admin")]
     public class RequestsController : ControllerBase
     {
-        private readonly IRequestService _service;
+        private readonly IRequestService _requestService;
+        private readonly IAuditLogService _auditService;
+        private readonly IAuthService _authService;
 
-        public RequestsController(IRequestService service)
+        public RequestsController(IRequestService requestService, IAuthService authService, IAuditLogService auditService)
         {
-            _service = service;
+            _requestService = requestService;
+            _auditService = auditService;
+            _authService = authService;
         }
 
         [HttpPost]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult<RequestResponseDto>> Post([FromBody] CreateRequestDto request)
         {
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userName))
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " criou o request " + request.Title
+                };
+                var createdRequest = await _requestService.CreateAsync(request, author.Id, author.Name);
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
                 return Unauthorized();
-
-            if (!int.TryParse(userId, out var id))
+            }
+            catch (InvalidOperationException)
+            {
                 return BadRequest();
+            }
 
-            var created = await _service.CreateAsync(request, id, userName);
             return Created();
         }
 
@@ -43,7 +62,32 @@ namespace PassAuth.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ManagerRequest>>> GetAll()
         {
-            var list = await _service.GetAllAsync();
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " buscou por todos os requests dos Managers"
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
+            var list = await _requestService.GetAllAsync();
+            
             return Ok(list);
         }
 
@@ -58,7 +102,7 @@ namespace PassAuth.Controllers
             if (!int.TryParse(authorId, out var id))
                 return Unauthorized();
 
-            var requests = await _service.GetByIdAsync(id);
+            var requests = await _requestService.GetByIdAsync(id);
 
             if(requests.Count == 0) return NoContent();
             return Ok(requests);
@@ -66,9 +110,33 @@ namespace PassAuth.Controllers
 
         [HttpPatch]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ManagerRequest>> Validate(int id, RequestStatus decision)
+        public async Task<ActionResult<ManagerRequest>> Validate(int requestId, RequestStatus decision)
         {
-            var updated = await _service.UpdateStatusAsync(id, decision);
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " declarou " + decision.ToString() + " na request " + requestId
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
+            var updated = await _requestService.UpdateStatusAsync(requestId, decision);
             return Ok(updated);
         }
     }

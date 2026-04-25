@@ -4,6 +4,7 @@ using PassAuth.DTOs.User;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
 using PassAuth.Services.Interfaces;
+using System.Security.Claims;
 
 namespace PassAuth.Controllers
 {
@@ -14,22 +15,72 @@ namespace PassAuth.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
+        private readonly IAuditLogService _auditService;
 
-        public UsersController(IUserService userService, IAuthService authService)
+        public UsersController(IUserService userService, IAuthService authService, IAuditLogService auditService)
         {
             _userService = userService;
             _authService = authService;
+            _auditService = auditService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+               var author = _authService.ValidateAuthor(authorName!, authorId!);
+               var auditLog = new AuditLog
+               {
+                   Author = author.Name,
+                   AuthorId = author.Id,
+                   Description = author.Name + " buscou por todos os usuários"
+               };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch(UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch(InvalidOperationException)
+            {
+                return BadRequest();
+            }
+            
             return await _userService.GetAllAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " buscou pelo usuário de ID: " + id
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
             var user = await _userService.GetByIdAsync(id);
 
             if (user == null)
@@ -43,6 +94,30 @@ namespace PassAuth.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " modificou dados do usuário de ID: " + id
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
             if (id != user.Id) return BadRequest();
 
             try
@@ -56,9 +131,34 @@ namespace PassAuth.Controllers
             }
         }
 
-        [HttpPatch("promote-user")]
+        [HttpPatch("promote-user/{id}/{newRole}")]
         public async Task<ActionResult> PromoteUser(int id, UserRole newRole)
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " promoveu usuário de ID: " + id
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
+
             try
             {
                 await _userService.PromoteAsync(id, newRole);
@@ -77,6 +177,30 @@ namespace PassAuth.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(CreateUserRequest user)
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " criou o usuário " + user.Username
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
             var temporaryPass = _authService.GenerateSecurePassword();
             var newUser = await _userService.AddAsync(user, temporaryPass);
 
@@ -97,6 +221,30 @@ namespace PassAuth.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
+            var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " deletou o usuário de ID: " + id
+                };
+
+                await _auditService.CreateAsync(auditLog);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+
             try
             {
                 await _userService.DeleteAsync(id);
