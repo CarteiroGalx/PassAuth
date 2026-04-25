@@ -56,7 +56,7 @@ namespace PassAuth.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(5),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials
             );
 
@@ -114,10 +114,10 @@ namespace PassAuth.Services
             return new string(result);
         }
 
-        public Author ValidateAuthor(string id, string name)
+        public Author ValidateAuthor(string name, string id)
         {
             if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException();
-            if (!int.TryParse(id, out var authorId)) throw new InvalidOperationException();
+            if (!int.TryParse(id, out var authorId) || string.IsNullOrEmpty(id) ) throw new InvalidOperationException();
             var author = new Author
             {
                 Name = name,
