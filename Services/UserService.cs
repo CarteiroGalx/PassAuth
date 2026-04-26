@@ -34,14 +34,14 @@ namespace PassAuth.Services
             return novoUsuario;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task ChangeUserStatus(int id, UserStatus newStatus)
         {
             var user = await GetByIdAsync(id);
             if (user is null)
             {
                 throw new KeyNotFoundException("User not found");
             }
-            user.isActive = false;
+            user.Status = newStatus;
             await context.SaveChangesAsync();
         }
 

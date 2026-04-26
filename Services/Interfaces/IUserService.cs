@@ -11,6 +11,6 @@ namespace PassAuth.Services.Interfaces
         Task<User> AddAsync(CreateUserRequest user, string plainPass);
         Task UpdateAsync(User user);
         Task PromoteAsync(int id, UserRole role);
-        Task DeleteAsync(int id);
+        Task ChangeUserStatus(int id, UserStatus newStatus);
     }
 }

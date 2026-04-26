@@ -217,8 +217,8 @@ namespace PassAuth.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -230,7 +230,7 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Name,
                     AuthorId = author.Id,
-                    Description = author.Name + " deletou o usuário de ID: " + id
+                    Description = author.Name + " alterou os status de usuário '" + id + "' para " + newStatus
                 };
 
                 await _auditService.CreateAsync(auditLog);
@@ -246,7 +246,7 @@ namespace PassAuth.Controllers
 
             try
             {
-                await _userService.DeleteAsync(id);
+                await _userService.ChangeUserStatus(id, newStatus);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
