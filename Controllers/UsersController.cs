@@ -32,25 +32,25 @@ namespace PassAuth.Controllers
 
             try
             {
-               var author = _authService.ValidateAuthor(authorName!, authorId!);
-               var auditLog = new AuditLog
-               {
-                   Author = author.Name,
-                   AuthorId = author.Id,
-                   Description = author.Name + " buscou por todos os usuários"
-               };
+                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                var auditLog = new AuditLog
+                {
+                    Author = author.Name,
+                    AuthorId = author.Id,
+                    Description = author.Name + " buscou por todos os usuários"
+                };
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch(UnauthorizedAccessException)
+            catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return BadRequest();
             }
-            
+
             return await _userService.GetAllAsync();
         }
 
@@ -136,7 +136,7 @@ namespace PassAuth.Controllers
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             try
             {
                 var author = _authService.ValidateAuthor(authorName!, authorId!);
@@ -164,13 +164,13 @@ namespace PassAuth.Controllers
                 await _userService.PromoteAsync(id, newRole);
                 return Ok();
             }
-            catch(KeyNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
-                return NotFound(new {message = ex.Message});
+                return NotFound(new { message = ex.Message });
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(new { message = ex.Message});
+                return BadRequest(new { message = ex.Message });
             }
         }
 
