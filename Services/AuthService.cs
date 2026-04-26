@@ -73,16 +73,9 @@ namespace PassAuth.Services
                 throw new InvalidOperationException("Nome de Usuário já existe");
             }
 
-            var emailExists = await _context.Users.AnyAsync(e => e.Email == request.Email);
-            if (emailExists)
-            {
-                throw new InvalidOperationException("E-mail já existe");
-            }
-
             var newUser = new User
             {
                 Username = request.Username,
-                Email = request.Email,
                 Role = UserRole.User
             };
 
@@ -95,7 +88,6 @@ namespace PassAuth.Services
             var response = new ProfileResponse
             {
                 Username = request.Username,
-                Email = request.Email,
                 Role = UserRole.User
             };
 
