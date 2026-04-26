@@ -131,7 +131,7 @@ namespace PassAuth.Controllers
             }
         }
 
-        [HttpPatch("promote-user/{id}/{newRole}")]
+        [HttpPatch("promote-user/{id}")]
         public async Task<ActionResult> PromoteUser(int id, UserRole newRole)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -144,7 +144,7 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Name,
                     AuthorId = author.Id,
-                    Description = author.Name + " promoveu usuário de ID: " + id
+                    Description = author.Name + " promoveu usuário de ID: " + id + " para " + newRole
                 };
 
                 await _auditService.CreateAsync(auditLog);
