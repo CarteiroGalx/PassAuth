@@ -12,11 +12,13 @@ namespace PassAuth.Controllers
     [Authorize]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService _service;
+        private readonly IAccountService _accountService;
+        private readonly IAuthService _authService;
 
         public AccountController(IAccountService service)
         {
-            _service = service;
+            _accountService = accountService;
+            _authService = authService;
         }
 
         [HttpGet("me")]
