@@ -34,14 +34,16 @@ namespace PassAuth.Services
             return novoUsuario;
         }
 
-        public async Task ChangeUserStatus(int id, UserStatus newStatus)
-        {
-            var user = await GetByIdAsync(id);
-            if (user is null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+        public async Task ChangeUserStatusAsync(User user, UserStatus newStatus)
+        {            
             user.Status = newStatus;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task ChangeUserStatusAsync(User user, UserStatus newStatus, double suspendExp)
+        {
+            user.Status = newStatus;
+            user.SuspendedUntil = DateTime.UtcNow.AddMinutes(suspendExp);
             await context.SaveChangesAsync();
         }
 
@@ -52,7 +54,7 @@ namespace PassAuth.Services
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            return await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return await context.Users.FindAsync(id);
         }
 
         public async Task PromoteAsync(int id, UserRole role)
