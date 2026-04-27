@@ -217,7 +217,7 @@ namespace PassAuth.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("change-status/{id}")]
         public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus, string reason, double? suspendedExp)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;

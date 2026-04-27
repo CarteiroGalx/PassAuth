@@ -105,7 +105,7 @@ namespace PassAuth.Controllers
             return Ok(requests);
         }
 
-        [HttpPatch]
+        [HttpPatch("{requestId}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ManagerRequest>> Validate(int requestId, RequestStatus decision)
         {
