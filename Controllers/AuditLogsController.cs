@@ -19,14 +19,14 @@ namespace PassAuth.Controllers
             _service = service;
         }
 
-        [HttpGet("audit")]
+        [HttpGet]
         public async Task<ActionResult<List<AuditLog>>> GetAuditLogs()
         {
             var events = await _service.GetAllAsync();
             return Ok(events);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<AuditLog>> GetById(int id)
         {
             var auditLog = await _service.GetAsync(id);
