@@ -92,23 +92,29 @@ namespace PassAuth
                 {
                     var db = services.GetRequiredService<AppDbContext>();
 
-                    // If there are no users, create a default admin user
                     if (!db.Users.Any())
                     {
                         var hasher = new PasswordHasher<User>();
-                        var admin = new User
-                        {
-                            Username = "Admin",
-                            Role = UserRole.Admin
-                        };
+                        var list = new List<User>();
 
-                        // Default password for prototyping. Change in production!
-                        admin.PasswordHash = hasher.HashPassword(admin, "123456");
-                        db.Users.Add(admin);
+                        for (int i = 1; i <= 50; i++)
+                        {
+                            var user = new User
+                            {
+                                Username = i == 1 ? "Admin" : $"user{i}",
+                                Role = i == 1 ? UserRole.Admin : (i <= 6 ? UserRole.Manager : UserRole.User)
+                            };
+
+                            user.PasswordHash = hasher.HashPassword(user, "Password123!");
+                            list.Add(user);
+                        }
+
+                        db.Users.AddRange(list);
                         db.SaveChanges();
                     }
                 }
-                catch{}
+                catch
+                {}
             }
 
             // Configure the HTTP request pipeline.
