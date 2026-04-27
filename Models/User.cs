@@ -22,5 +22,7 @@ namespace PassAuth.Models
 
         [Required]
         public UserStatus Status { get; set; } = UserStatus.Active;
+        [DataType(DataType.Date)]
+        public DateTime? SuspendedUntil { get; set; }
     }
 }
