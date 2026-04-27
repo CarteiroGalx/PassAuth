@@ -96,11 +96,8 @@ namespace PassAuth.Controllers
         {
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (authorId == null)
-                return BadRequest();
-
-            if (!int.TryParse(authorId, out var id))
-                return Unauthorized();
+            if (authorId == null) return BadRequest();
+            if (!int.TryParse(authorId, out var id)) return Unauthorized();
 
             var requests = await _requestService.GetByIdAsync(id);
 

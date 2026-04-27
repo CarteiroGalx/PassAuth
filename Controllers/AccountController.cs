@@ -26,15 +26,9 @@ namespace PassAuth.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(userIdClaim, out var id))
-            {
-                return Unauthorized();
-            }
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+             if (!int.TryParse(userIdClaim, out var id)) return Unauthorized();
+            
             var user = await _accountService.GetByIdAsync(id);
             if (user == null) return NotFound();
 
@@ -55,15 +49,8 @@ namespace PassAuth.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim))
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(userIdClaim, out var id))
-            {
-                return Unauthorized();
-            }
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+            if (!int.TryParse(userIdClaim, out var id)) return Unauthorized();
 
             try
             {
