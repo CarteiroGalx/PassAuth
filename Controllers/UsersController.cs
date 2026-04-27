@@ -218,40 +218,46 @@ namespace PassAuth.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus)
+        public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus, string reason, double? suspendedExp)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {
+                var user = await _userService.GetByIdAsync(id);
+                if (user is null) return NotFound();
                 var author = _authService.ValidateAuthor(authorName!, authorId!);
                 var auditLog = new AuditLog
                 {
                     Author = author.Name,
                     AuthorId = author.Id,
-                    Description = author.Name + " alterou os status de usuário '" + id + "' para " + newStatus
+                    Description = author.Name + " alterou os status de usuário '" + id + "' para " + newStatus + ". " +
+                    "Justificativa: " + reason
                 };
 
+                if (suspendedExp > 0 && newStatus == UserStatus.Suspended)
+                {
+                    var minutes = suspendedExp.Value;
+                    await _userService.ChangeUserStatusAsync(user, newStatus, minutes);
+                    auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
+                }
+                else if (newStatus == UserStatus.Suspended)
+                    return BadRequest( new {message = "Tempo de suspensão é obrigatório"});
+                else
+                    await _userService.ChangeUserStatusAsync(user, newStatus);
+
                 await _auditService.CreateAsync(auditLog);
+                return Ok(new {message = "Usuário " + user.Id + " está marcado agora como " + user.Status});
+
             }
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
             }
-            catch (InvalidOperationException)
+            catch (BadHttpRequestException ex)
             {
-                return BadRequest();
-            }
-
-            try
-            {
-                await _userService.ChangeUserStatus(id, newStatus);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { e = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
