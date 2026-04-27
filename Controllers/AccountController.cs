@@ -15,7 +15,7 @@ namespace PassAuth.Controllers
         private readonly IAccountService _accountService;
         private readonly IAuthService _authService;
 
-        public AccountController(IAccountService service)
+        public AccountController(IAccountService accountService, IAuthService authService)
         {
             _accountService = accountService;
             _authService = authService;
