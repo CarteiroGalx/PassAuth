@@ -108,7 +108,7 @@ namespace PassAuth.Services
         public Author ValidateAuthor(string name, string id)
         {
             if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException();
-            if (!int.TryParse(id, out var authorId) || string.IsNullOrEmpty(id) ) throw new InvalidOperationException();
+            if (!int.TryParse(id, out var authorId) || string.IsNullOrEmpty(id) ) throw new BadHttpRequestException("Token corrompido ou incompleto");
             var author = new Author
             {
                 Name = name,
