@@ -35,10 +35,17 @@ namespace PassAuth.Controllers
             {
                 return Unauthorized();
             }
-
-            var user = await _service.GetByIdAsync(id);
-
+            var user = await _accountService.GetByIdAsync(id);
             if (user == null) return NotFound();
+
+            try
+            {
+                await _authService.ValidateAcess(user);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new {message = "Sua conta está banida, suspensa ou desativada."});
+            }
 
             return Ok(user);
         }
@@ -60,7 +67,7 @@ namespace PassAuth.Controllers
 
             try
             {
-                await _service.ChangePasswordAsync(id, dto);
+                await _accountService.ChangePasswordAsync(id, dto);
                 return Ok(dto);
             }
             catch (KeyNotFoundException)

@@ -117,5 +117,18 @@ namespace PassAuth.Services
 
             return author;
         }
+
+        public async Task ValidateAcess(User user)
+        {
+            if (user.SuspendedUntil < DateTime.UtcNow && user.Status == UserStatus.Suspended)
+            {
+                user.SuspendedUntil = null;
+                user.Status = UserStatus.Active;
+                await _context.SaveChangesAsync();
+            }
+
+            if (user.Status != UserStatus.Active) throw new UnauthorizedAccessException();
+        }
+
     }
 }

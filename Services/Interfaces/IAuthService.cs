@@ -9,5 +9,6 @@ namespace PassAuth.Services.Interfaces
         Task<string> Login(LoginRequest request);
         string GenerateSecurePassword(int length = 12);
         Author ValidateAuthor(string id, string name);
+        Task ValidateAcess(User user);
     }
 }
