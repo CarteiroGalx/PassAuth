@@ -33,8 +33,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var id);
-                var author = await _userService.GetByIdAsync(id);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
                 if (author == null) return Unauthorized();
                 _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
@@ -67,12 +67,15 @@ namespace PassAuth.Controllers
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " buscou pelo usuário de ID: " + id
+                    Description = author.Username + " buscou pelo usuário de ID: " + id
                 };
 
                 await _auditService.CreateAsync(auditLog);
