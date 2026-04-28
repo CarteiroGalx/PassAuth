@@ -10,6 +10,6 @@ namespace PassAuth.Services.Interfaces
         string GenerateSecurePassword(int length = 12);
         Author ValidateAuthor(string id, string name);
         void CheckUserStatus(User user);
-        Task CheckUserStatus(int userId);
+        Task CheckUserStatusAsync(int userId);
     }
 }
