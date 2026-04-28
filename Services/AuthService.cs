@@ -117,5 +117,28 @@ namespace PassAuth.Services
 
             return author;
         }
+
+        public void CheckUserStatus(User user)
+        {
+            if (user.Status == UserStatus.Banned)
+                throw new UnauthorizedAccessException("Sua conta está banida. Entre em contato com a administração");
+            if (user.Status == UserStatus.Suspended) {
+                var timeSuspension = user.SuspendedUntil;
+                throw new UnauthorizedAccessException($"Sua conta está suspensa por mais {timeSuspension} minutos.");
+            }
+        }
+
+        public async Task CheckUserStatusAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user is null) throw new UnauthorizedAccessException();
+            if (user.Status == UserStatus.Banned)
+                throw new UnauthorizedAccessException("Sua conta está banida. Entre em contato com a administração");
+            if (user.Status == UserStatus.Suspended)
+            {
+                var timeSuspension = user.SuspendedUntil;
+                throw new UnauthorizedAccessException($"Sua conta está suspensa por mais {timeSuspension} minutos.");
+            }
+        }
     }
 }
