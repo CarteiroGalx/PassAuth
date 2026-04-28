@@ -15,6 +15,7 @@ namespace PassAuth.Models
         public string Username { get; set; } = string.Empty;
         [Required(ErrorMessage = "E-mail é obrigatório")]
         [StringLength(100)]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = string.Empty;
 
         [Required]
