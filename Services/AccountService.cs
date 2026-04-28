@@ -42,7 +42,7 @@ namespace PassAuth.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task ResetSuspension(User user)
+        public async Task ResetSuspensionAsync(User user)
         {
             if (user.SuspendedUntil < DateTime.UtcNow && user.Status == UserStatus.Suspended)
             {
