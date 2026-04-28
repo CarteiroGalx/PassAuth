@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
+using PassAuth.Services;
 using PassAuth.Services.Interfaces;
 using System.Security.Claims;
 
@@ -14,11 +15,13 @@ namespace PassAuth.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public AccountController(IAccountService accountService, IAuthService authService)
+        public AccountController(IAccountService accountService, IAuthService authService, IUserService userService)
         {
             _accountService = accountService;
             _authService = authService;
+            _userService = userService;
         }
 
         [HttpGet("me")]
@@ -54,6 +57,9 @@ namespace PassAuth.Controllers
 
             try
             {
+                var userAuthor = await _userService.GetByIdAsync(id);
+                if (userAuthor is null) return Unauthorized();
+                await _authService.ValidateAcess(userAuthor);
                 await _accountService.ChangePasswordAsync(id, dto);
                 return Ok(dto);
             }
