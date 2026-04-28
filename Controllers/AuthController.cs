@@ -45,6 +45,10 @@ namespace PassAuth.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { message = "Sua conta está banida ou suspensa." });
+            }
         }
     }
 }
