@@ -7,5 +7,6 @@ namespace PassAuth.Services.Interfaces
     {
         Task<User?> GetByIdAsync(int id);
         Task ChangePasswordAsync(int id, ChangePasswordRequest dto);
+        Task ResetSuspension(User user);
     }
 }

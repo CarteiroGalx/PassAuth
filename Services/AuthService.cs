@@ -117,15 +117,5 @@ namespace PassAuth.Services
 
             return author;
         }
-
-        public async Task ResetSuspension(User user)
-        {
-            if (user.SuspendedUntil < DateTime.UtcNow && user.Status == UserStatus.Suspended)
-            {
-                user.SuspendedUntil = null;
-                user.Status = UserStatus.Active;
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }
