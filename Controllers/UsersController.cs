@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PassAuth.DTOs.User;
 using PassAuth.Models;
 using PassAuth.Models.Enums;
+using PassAuth.Services;
 using PassAuth.Services.Interfaces;
 using System.Security.Claims;
 
@@ -179,9 +180,13 @@ namespace PassAuth.Controllers
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(!int.TryParse(authorId, out var id)) return BadRequest();
 
             try
             {
+                var userAuthor = await _userService.GetByIdAsync(id);
+                if(userAuthor is null) return Unauthorized();
+                await _authService.ValidateAcess(userAuthor);
                 var author = _authService.ValidateAuthor(authorName!, authorId!);
                 var auditLog = new AuditLog
                 {
