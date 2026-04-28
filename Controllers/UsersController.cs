@@ -252,14 +252,21 @@ namespace PassAuth.Controllers
                     "Justificativa: " + reason
                 };
 
-                if (suspendedExp > 0 && newStatus == UserStatus.Suspended)
+                var user = await _userService.GetByIdAsync(id);
+                if(user == null) return NotFound();
+                if (newStatus == UserStatus.Suspended)
+                {
+                    if (suspendedExp > 0)
                 {
                     var minutes = suspendedExp.Value;
                     await _userService.ChangeUserStatusAsync(user, newStatus, minutes);
                     auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
                 }
-                else if (newStatus == UserStatus.Suspended)
-                    return BadRequest( new {message = "Tempo de suspensão é obrigatório"});
+                    if(suspendedExp <= 0)
+                    {
+                        return BadRequest(new { message = "Tempo de suspensão é obrigatório" });
+                    }
+                }
                 else
                     await _userService.ChangeUserStatusAsync(user, newStatus);
 
