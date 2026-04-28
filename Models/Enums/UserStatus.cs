@@ -3,8 +3,7 @@
     public enum UserStatus
     {
         Active = 0,
-        Deactived = 1,
-        Banned = 2,
-        Suspended = 3,
+        Banned = 1,
+        Suspended = 2,
     }
 }
