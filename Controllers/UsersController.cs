@@ -90,11 +90,7 @@ namespace PassAuth.Controllers
             }
 
             var user = await _userService.GetByIdAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
+            if (user == null) return NotFound();
 
             return user;
         }
