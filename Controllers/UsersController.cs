@@ -26,7 +26,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -55,12 +55,11 @@ namespace PassAuth.Controllers
                 return BadRequest(new { message = ex.Message });
             }
 
-
             return await _userService.GetAllAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -89,13 +88,13 @@ namespace PassAuth.Controllers
                 return BadRequest(new { message = ex.Message });
             }
 
-            var user = await _userService.GetByIdAsync(id);
+            var user = await _userService.GetByIdDtoAsync(id);
             if (user == null) return NotFound();
 
             return user;
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")] //TODO: CRIAR DTO PARA METODO DE ALTERAR DADOS DE USUARIO
         public async Task<IActionResult> PutUser(int id, User user)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -124,7 +123,7 @@ namespace PassAuth.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-
+            //TODO: BLOQUEAR SE UM ADMIN TENTAR ALTERAR DADOS DE OUTRO ADMIN
             if (id != user.Id) return BadRequest();
 
             try
@@ -151,7 +150,6 @@ namespace PassAuth.Controllers
                 if (author == null) return Unauthorized();
                 _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
-
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
@@ -257,11 +255,11 @@ namespace PassAuth.Controllers
                 if (newStatus == UserStatus.Suspended)
                 {
                     if (suspendedExp > 0)
-                {
-                    var minutes = suspendedExp.Value;
-                    await _userService.ChangeUserStatusAsync(user, newStatus, minutes);
-                    auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
-                }
+                    {
+                        var minutes = suspendedExp.Value;
+                        await _userService.ChangeUserStatusAsync(user, newStatus, minutes);
+                        auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
+                    }
                     if(suspendedExp <= 0)
                     {
                         return BadRequest(new { message = "Tempo de suspensão é obrigatório" });

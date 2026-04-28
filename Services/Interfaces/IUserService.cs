@@ -5,8 +5,9 @@ namespace PassAuth.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<List<User>> GetAllAsync();
+        Task<List<UserResponseDto>> GetAllAsync();
         Task<User?> GetByIdAsync(int id);
+        Task<UserResponseDto?> GetByIdDtoAsync(int id);
         Task<bool> UserExistsAsync(int id);
         Task<User> AddAsync(CreateUserRequest user, string plainPass);
         Task UpdateAsync(User user);

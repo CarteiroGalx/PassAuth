@@ -47,14 +47,38 @@ namespace PassAuth.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<User>> GetAllAsync()
+        public async Task<List<UserResponseDto>> GetAllAsync()
         {
-            return await context.Users.AsNoTracking().ToListAsync();
+            var users = await context.Users.AsNoTracking().ToListAsync();
+
+            return users.Select(u => new UserResponseDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email,
+                Role = u.Role,
+                Status = u.Status
+            }).ToList();
         }
 
         public async Task<User?> GetByIdAsync(int id)
         {
             return await context.Users.FindAsync(id);
+        }
+
+        public async Task<UserResponseDto?> GetByIdDtoAsync(int id)
+        {
+            var user = await context.Users.FindAsync(id);
+            var response = new UserResponseDto
+            {
+                Id = id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                Status = user.Status
+            };
+
+            return response;
         }
 
         public async Task PromoteAsync(int id, UserRole role)
