@@ -80,13 +80,13 @@ namespace PassAuth.Controllers
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
-            catch (InvalidOperationException)
+            catch (BadHttpRequestException ex)
             {
-                return BadRequest();
+                return BadRequest(new { message = ex.Message });
             }
 
             var user = await _userService.GetByIdAsync(id);
@@ -116,13 +116,13 @@ namespace PassAuth.Controllers
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
-            catch (InvalidOperationException)
+            catch (BadHttpRequestException ex)
             {
-                return BadRequest();
+                return BadRequest(new { message = ex.Message });
             }
 
             if (id != user.Id) return BadRequest();
@@ -146,23 +146,27 @@ namespace PassAuth.Controllers
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
+
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " promoveu usuário de ID: " + id + " para " + newRole
+                    Description = author.Username + " promoveu usuário de ID: " + id + " para " + newRole
                 };
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
-            catch (InvalidOperationException)
+            catch (BadHttpRequestException ex)
             {
-                return BadRequest();
+                return BadRequest(new { message = ex.Message });
             }
 
 
@@ -190,26 +194,26 @@ namespace PassAuth.Controllers
 
             try
             {
-                var userAuthor = await _userService.GetByIdAsync(id);
-                if(userAuthor is null) return Unauthorized();
-                await _authService.ValidateAcess(userAuthor);
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " criou o usuário " + user.Username
+                    Description = author.Username + " criou o usuário " + user.Username
                 };
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
-            catch (InvalidOperationException)
+            catch (BadHttpRequestException ex)
             {
-                return BadRequest();
+                return BadRequest(new { message = ex.Message });
             }
 
             var temporaryPass = _authService.GenerateSecurePassword();
@@ -236,14 +240,15 @@ namespace PassAuth.Controllers
 
             try
             {
-                var user = await _userService.GetByIdAsync(id);
-                if (user is null) return NotFound();
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " alterou os status de usuário '" + id + "' para " + newStatus + ". " +
+                    Description = author.Username + " alterou os status de usuário '" + id + "' para " + newStatus + ". " +
                     "Justificativa: " + reason
                 };
 
@@ -262,9 +267,9 @@ namespace PassAuth.Controllers
                 return Ok(new {message = "Usuário " + user.Id + " está marcado agora como " + user.Status});
 
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
             catch (BadHttpRequestException ex)
             {
