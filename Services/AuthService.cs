@@ -29,15 +29,6 @@ namespace PassAuth.Services
                 throw new InvalidOperationException("Nome de usuário ou senha inválidos");
             }
 
-            try
-            {
-                await ValidateAcess(user);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
             var hasher = new PasswordHasher<User>();
             var verification = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (verification == PasswordVerificationResult.Failed)
@@ -127,7 +118,7 @@ namespace PassAuth.Services
             return author;
         }
 
-        public async Task ValidateAcess(User user)
+        public async Task ResetSuspension(User user)
         {
             if (user.SuspendedUntil < DateTime.UtcNow && user.Status == UserStatus.Suspended)
             {
@@ -135,9 +126,6 @@ namespace PassAuth.Services
                 user.Status = UserStatus.Active;
                 await _context.SaveChangesAsync();
             }
-
-            if (user.Status != UserStatus.Active) throw new UnauthorizedAccessException();
         }
-
     }
 }
