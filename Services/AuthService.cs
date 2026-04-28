@@ -29,6 +29,15 @@ namespace PassAuth.Services
                 throw new InvalidOperationException("Nome de usuário ou senha inválidos");
             }
 
+            try
+            {
+                await ValidateAcess(user);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             var hasher = new PasswordHasher<User>();
             var verification = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (verification == PasswordVerificationResult.Failed)
