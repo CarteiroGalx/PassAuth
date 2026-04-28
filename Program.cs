@@ -102,6 +102,7 @@ namespace PassAuth
                             var user = new User
                             {
                                 Username = i == 1 ? "Admin" : $"user{i}",
+                                Email = $"user{i}@local",
                                 Role = i == 1 ? UserRole.Admin : (i <= 6 ? UserRole.Manager : UserRole.User)
                             };
 
