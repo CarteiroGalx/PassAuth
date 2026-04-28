@@ -19,12 +19,14 @@ namespace PassAuth.Controllers
         private readonly IRequestService _requestService;
         private readonly IAuditLogService _auditService;
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public RequestsController(IRequestService requestService, IAuthService authService, IAuditLogService auditService)
+        public RequestsController(IRequestService requestService, IAuthService authService, IAuditLogService auditService, IUserService userService)
         {
             _requestService = requestService;
             _auditService = auditService;
             _authService = authService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -36,14 +38,17 @@ namespace PassAuth.Controllers
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " criou o request " + request.Title
+                    Description = author.Username + " criou o request " + request.Title
                 };
-                var createdRequest = await _requestService.CreateAsync(request, author.Id, author.Name);
+                await _requestService.CreateAsync(request, author.Id, author.Username);
                 await _auditService.CreateAsync(auditLog);
             }
             catch (UnauthorizedAccessException)
@@ -67,12 +72,15 @@ namespace PassAuth.Controllers
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " buscou por todos os requests dos Managers"
+                    Description = author.Username + " buscou por todos os requests dos Managers"
                 };
 
                 await _auditService.CreateAsync(auditLog);
@@ -98,6 +106,7 @@ namespace PassAuth.Controllers
 
             if (authorId == null) return BadRequest();
             if (!int.TryParse(authorId, out var id)) return Unauthorized();
+            await _authService.CheckUserStatusAsync(id);
 
             var requests = await _requestService.GetByIdAsync(id);
 
@@ -114,12 +123,15 @@ namespace PassAuth.Controllers
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
+                var author = await _userService.GetByIdAsync(verifiedAuthorId);
+                if (author == null) return Unauthorized();
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " declarou " + decision.ToString() + " na request " + requestId
+                    Description = author.Username + " declarou " + decision.ToString() + " na request " + requestId
                 };
 
                 await _auditService.CreateAsync(auditLog);
