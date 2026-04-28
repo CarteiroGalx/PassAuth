@@ -13,6 +13,9 @@ namespace PassAuth.Models
         [Required(ErrorMessage = "O nome de usuário é obrigatório.")]
         [StringLength(20, MinimumLength = 3, ErrorMessage = "O usuário deve ter entre 3 e 20 caracteres.")]
         public string Username { get; set; } = string.Empty;
+        [Required(ErrorMessage = "E-mail é obrigatório")]
+        [StringLength(100)]
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
