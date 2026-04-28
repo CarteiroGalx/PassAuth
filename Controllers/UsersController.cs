@@ -30,26 +30,25 @@ namespace PassAuth.Controllers
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _authService.ValidateAuthor(authorName!, authorId!, out var id);
+            var author = await _userService.GetByIdAsync(id);
+            if (author == null) return Unauthorized();
 
             try
             {
-                var author = _authService.ValidateAuthor(authorName!, authorId!);
+                _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
-                    Author = author.Name,
+                    Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Name + " buscou por todos os usuários"
+                    Description = author.Username + " buscou por todos os usuários"
                 };
 
                 await _auditService.CreateAsync(auditLog);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
-            }
-            catch (InvalidOperationException)
-            {
-                return BadRequest();
+                return Unauthorized(new { message = ex.Message});
             }
 
             return await _userService.GetAllAsync();
