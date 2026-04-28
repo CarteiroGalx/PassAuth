@@ -30,12 +30,12 @@ namespace PassAuth.Controllers
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            _authService.ValidateAuthor(authorName!, authorId!, out var id);
-            var author = await _userService.GetByIdAsync(id);
-            if (author == null) return Unauthorized();
 
             try
             {
+                _authService.ValidateAuthor(authorName!, authorId!, out var id);
+                var author = await _userService.GetByIdAsync(id);
+                if (author == null) return Unauthorized();
                 _authService.CheckUserStatus(author);
                 var auditLog = new AuditLog
                 {
