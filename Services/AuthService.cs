@@ -105,10 +105,11 @@ namespace PassAuth.Services
             return new string(result);
         }
 
-        public void ValidateAuthor(string name, string id)
+        public void ValidateAuthor(string name, string id, out int verifiedId)
         {
             if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException("Token corrompido ou incompleto");
-            if (!int.TryParse(id, out var authorId) || string.IsNullOrEmpty(id) ) throw new BadHttpRequestException("Token corrompido ou incompleto");
+            if (!int.TryParse(id, out var authorId)) throw new BadHttpRequestException("Token corrompido ou incompleto");
+            verifiedId = authorId;
         }
 
         public void CheckUserStatus(User user)
