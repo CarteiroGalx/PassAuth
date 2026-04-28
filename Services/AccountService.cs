@@ -22,14 +22,8 @@ namespace PassAuth.Services
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task ChangePasswordAsync(int id, ChangePasswordRequest dto)
+        public async Task ChangePasswordAsync(User user, ChangePasswordRequest dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("Usuário não encontrado");
-            }
-
             var hasher = new PasswordHasher<User>();
             var verification = hasher.VerifyHashedPassword(user, user.PasswordHash, dto.CurrentPassword);
 
