@@ -81,18 +81,18 @@ namespace PassAuth.Services
             return response;
         }
 
-        public async Task PromoteAsync(int id, UserRole role)
+        public async Task PromoteAsync(int id, NewRoleUserRequest dto)
         {
             var user = await GetByIdAsync(id);
             if (user == null)
                 throw new KeyNotFoundException("User not found");
             
 
-            if (role == 0 )
+            if (dto.NewRole == 0 )
                 throw new InvalidOperationException("Não pode promover para 'User'");
             
 
-            user.Role = role;
+            user.Role = dto.NewRole;
             await context.SaveChangesAsync();
         }
 

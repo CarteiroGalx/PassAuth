@@ -143,7 +143,7 @@ namespace PassAuth.Controllers
         }
 
         [HttpPatch("promote-user/{id}")]
-        public async Task<ActionResult> PromoteUser(int id, UserRole newRole)
+        public async Task<ActionResult> PromoteUser(int id, NewRoleUserRequest dto)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -158,7 +158,7 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Username + " promoveu usuário de ID: " + id + " para " + newRole
+                    Description = author.Username + " promoveu usuário de ID: " + id + " para " + dto.NewRole
                 };
 
                 await _auditService.CreateAsync(auditLog);
@@ -175,7 +175,7 @@ namespace PassAuth.Controllers
 
             try
             {
-                await _userService.PromoteAsync(id, newRole);
+                await _userService.PromoteAsync(id, dto);
                 return Ok();
             }
             catch (KeyNotFoundException ex)
