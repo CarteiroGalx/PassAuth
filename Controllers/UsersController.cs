@@ -235,8 +235,8 @@ namespace PassAuth.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
-        [HttpPatch("change-status/{id}")] //TODO: CRIAR DTO PARA TROCA DE STATUS
-        public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus, string reason, double? suspendedExp)
+        [HttpPatch("change-status/{id}")]
+        public async Task<IActionResult> ChangerUserStatus(int id, NewStatusRequest dto)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -251,27 +251,27 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Username + " alterou os status de usuário '" + id + "' para " + newStatus + ". " +
-                    "Justificativa: " + reason
+                    Description = author.Username + " alterou os status de usuário '" + id + "' para " + dto.NewStatus + ". " +
+                    "Justificativa: " + dto.Reason
                 };
 
                 var user = await _userService.GetByIdAsync(id);
                 if(user == null) return NotFound();
-                if (newStatus == UserStatus.Suspended)
+                if (dto.NewStatus == UserStatus.Suspended)
                 {
-                    if (suspendedExp > 0)
+                    if (dto.SuspendedExp > 0)
                     {
-                        var minutes = suspendedExp.Value;
-                        await _userService.ChangeUserStatusAsync(user, newStatus, minutes);
+                        var minutes = dto.SuspendedExp.Value;
+                        await _userService.ChangeUserStatusAsync(user, dto.NewStatus, minutes);
                         auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
                     }
-                    if(suspendedExp <= 0)
+                    if(dto.SuspendedExp <= 0)
                     {
                         return BadRequest(new { message = "Tempo de suspensão é obrigatório" });
                     }
                 }
                 else
-                    await _userService.ChangeUserStatusAsync(user, newStatus);
+                    await _userService.ChangeUserStatusAsync(user, dto.NewStatus);
 
                 await _auditService.CreateAsync(auditLog);
                 return Ok(new {message = "Usuário " + user.Id + " está marcado agora como " + user.Status});
