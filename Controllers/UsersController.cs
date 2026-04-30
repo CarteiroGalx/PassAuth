@@ -123,8 +123,13 @@ namespace PassAuth.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            //TODO: BLOQUEAR SE UM ADMIN TENTAR ALTERAR DADOS DE OUTRO ADMIN
-            if (id != user.Id) return BadRequest();
+
+            var user = await _userService.GetByIdAsync(id);
+            if(user == null) return NotFound();
+
+            user.Username = dto.Username;
+            user.Role = dto.Role;
+            user.Email = dto.Email;
 
             try
             {
