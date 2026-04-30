@@ -94,8 +94,8 @@ namespace PassAuth.Controllers
             return user;
         }
 
-        [HttpPut("{id}")] //TODO: CRIAR DTO PARA METODO DE ALTERAR DADOS DE USUARIO
-        public async Task<IActionResult> PutUser(int id, User user)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, ModifyUserRequest dto)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
