@@ -10,6 +10,6 @@ namespace PassAuth.DTOs.User
         [Required(ErrorMessage = "E-mail é obrigatório")]
         [StringLength(100, ErrorMessage = "Máximo de caractéres ultrapassado")]
         [DataType(DataType.EmailAddress)]
-        public string email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }
