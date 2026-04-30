@@ -142,8 +142,8 @@ namespace PassAuth.Controllers
             }
         }
 
-        [HttpPatch("promote-user/{id}")]
-        public async Task<ActionResult> PromoteUser(int id, NewRoleUserRequest dto)
+        [HttpPatch("change-role/{id}")]
+        public async Task<ActionResult> ChangerUserRole(int id, NewRoleUserRequest dto)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -235,7 +235,7 @@ namespace PassAuth.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, userResponse);
         }
 
-        [HttpPatch("change-status/{id}")]
+        [HttpPatch("change-status/{id}")] //TODO: CRIAR DTO PARA TROCA DE STATUS
         public async Task<IActionResult> ChangerUserStatus(int id, UserStatus newStatus, string reason, double? suspendedExp)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
