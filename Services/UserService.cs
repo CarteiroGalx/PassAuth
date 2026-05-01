@@ -57,7 +57,8 @@ namespace PassAuth.Services
                 Username = u.Username,
                 Email = u.Email,
                 Role = u.Role,
-                Status = u.Status
+                Status = u.Status,
+                SuspendedUntil = u.SuspendedUntil
             }).ToList();
         }
 
@@ -75,7 +76,8 @@ namespace PassAuth.Services
                 Username = user.Username,
                 Email = user.Email,
                 Role = user.Role,
-                Status = user.Status
+                Status = user.Status,
+                SuspendedUntil = user.SuspendedUntil
             };
 
             return response;
