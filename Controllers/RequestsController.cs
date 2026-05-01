@@ -116,7 +116,7 @@ namespace PassAuth.Controllers
 
         [HttpPatch("{requestId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ManagerRequest>> Validate(int requestId, RequestStatus decision)
+        public async Task<ActionResult<ManagerRequest>> Validate(int requestId, ValidateRequestDto dto)
         {
             var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -131,7 +131,7 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Username + " declarou " + decision.ToString() + " na request " + requestId
+                    Description = author.Username + " declarou " + dto.NewStatus.ToString() + " na request " + requestId
                 };
 
                 await _auditService.CreateAsync(auditLog);
@@ -145,7 +145,7 @@ namespace PassAuth.Controllers
                 return BadRequest();
             }
 
-            var updated = await _requestService.UpdateStatusAsync(requestId, decision);
+            var updated = await _requestService.UpdateStatusAsync(requestId, dto.NewStatus);
             return Ok(updated);
         }
     }
