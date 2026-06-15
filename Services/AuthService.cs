@@ -107,7 +107,7 @@ namespace PassAuth.Services
             return new string(result);
         }
 
-        public async Task<User> ValidateUser(string name, string id)
+        public async Task<User> ValidateUserAsync(string name, string id)
         {
             if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException("Token corrompido ou incompleto");
             if (!int.TryParse(id, out var authorId)) throw new BadHttpRequestException("Token corrompido ou incompleto");
@@ -123,19 +123,6 @@ namespace PassAuth.Services
             }
 
             return validatedUser;
-        }
-
-        public async Task CheckUserStatusAsync(int userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user is null) throw new UnauthorizedAccessException();
-            if (user.Status == UserStatus.Banned)
-                throw new UnauthorizedAccessException("Sua conta está banida. Entre em contato com a administração");
-            if (user.Status == UserStatus.Suspended)
-            {
-                var timeSuspension = user.SuspendedUntil;
-                throw new UnauthorizedAccessException($"Sua conta está suspensa por mais {timeSuspension} minutos.");
-            }
         }
     }
 }
