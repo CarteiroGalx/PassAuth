@@ -14,13 +14,11 @@ namespace PassAuth.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IAuthService _authService;
         private readonly IUserService _userService;
 
-        public AccountController(IAccountService accountService, IAuthService authService, IUserService userService)
+        public AccountController(IAccountService accountService, IUserService userService)
         {
             _accountService = accountService;
-            _authService = authService;
             _userService = userService;
         }
 

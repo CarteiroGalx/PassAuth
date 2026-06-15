@@ -38,7 +38,7 @@ namespace PassAuth.Controllers
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
                 await _requestService.CreateAsync(request, author.Id, author.Username);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " criou a request: " + request.Title);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} criou a request: {request.Title}");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -66,7 +66,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou por todos os Requests");
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} buscou por todos os Requests");
             }
             catch (UnauthorizedAccessException)
             {
@@ -110,7 +110,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " declarou " + dto.NewStatus.ToString() + " na request " + requestId);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} declarou {dto.NewStatus} na request {requestId}");
             }
             catch (UnauthorizedAccessException)
             {

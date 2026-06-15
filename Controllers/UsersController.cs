@@ -34,7 +34,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou por todos os usuários");
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} buscou por todos os usuários");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -57,7 +57,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou pelo usuário de ID: " + id);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} buscou pelo usuário de ID: {id}");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -83,7 +83,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " editou o usuário de ID: " + id);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} editou o usuário de ID: {id}");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -121,7 +121,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " promoveu usuário de ID: " + id + " para " + dto.NewRole);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} promoveu usuário de ID: {id} para {dto.NewRole}");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -157,7 +157,7 @@ namespace PassAuth.Controllers
             try
             {
                 var author = await _authService.ValidateUserAsync(authorName!, authorId!);
-                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " criou o usuário " + user.Username);
+                await _auditService.CreateAsync(author.Id, author.Username, $"{author.Username} criou o usuário {user.Username}");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -197,7 +197,7 @@ namespace PassAuth.Controllers
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Username + " declarou " + dto.NewStatus.ToString() + " para o usuário de ID: " + id
+                    Description = $"{author.Username} declarou {dto.NewStatus} para o usuário de ID: {id}"
                 };
 
                 var user = await _userService.GetByIdAsync(id);
@@ -208,7 +208,7 @@ namespace PassAuth.Controllers
                     {
                         var minutes = dto.SuspendedExp.Value;
                         await _userService.ChangeUserStatusAsync(user, dto.NewStatus, minutes);
-                        auditLog.Description += ". Tempo de suspensão: " + minutes + " minutos";
+                        auditLog.Description += $". Tempo de suspensão: {minutes} minutos";
                     }
                     if(dto.SuspendedExp <= 0)
                     {
@@ -219,7 +219,7 @@ namespace PassAuth.Controllers
                     await _userService.ChangeUserStatusAsync(user, dto.NewStatus);
 
                 await _auditService.CreateAsync(auditLog);
-                return Ok(new {message = "Usuário " + user.Id + " está marcado agora como " + user.Status});
+                return Ok(new {message = $"Usuário {user.Id} está marcado agora como {user.Status}"});
 
             }
             catch (UnauthorizedAccessException ex)
