@@ -5,7 +5,7 @@ O foco do projeto é a **autenticação e segurança**, e por isso quaisquer out
 ## ⚙️Funcionalidades
 Começando do básico, tem o sistema de Login e Register. Criando uma conta, você recebe o cargo de User, o cargo básico e de menor nível que te dá acesso à alguns pontos não tão restritos mas que são próprios do usuário que está logado. Ninguém além de você mesmo consegue acessar seus dados, já que o sistema usa um sistema de Token, uma chave digital e criptografada que basicamente garante que um infrator não consiga acessar seus dados.
 
-Tem também o fato de que o único ser que tem a senha do usuário é o próprio sistema, e não os admins. A senha não cai em texto puro no banco de dados e sim também criptografada, sem falar que mesmo que um Admin mal intencionado busque pelos dados de um usuário específico, a senha não é entregue pelo sistema mesmo que esteja criptografada. Um outro detalhe também é que existem pontos no sistema aonde são restritos a pessoas com cargos maiores, como a solicitação de pedidos chamado Requests que é exclusivo dos Gerentes (Managers), e também o painel de controle dos usuários que é restrito aos Administrador (Admin). Existe também e provavelmente o maior trunfo é o Registro de Auditoria, aonde o sistema literalmente grava tudo que você faz de importante no sistema, seja modificar dados de um registro específico, criação de novos usuários de forma manual e até mesmo por buscar dados de uma pessoa específico. Isso foi criado na intenção de expor possíveis comportamentos suspeitos e de prover proteção à própria empresa, visando buscar provas sobre quem fez oque.
+Tem também o fato de que o único ser que tem a senha do usuário é o próprio sistema, e não os admins. A senha não cai em texto puro no banco de dados e sim também criptografada, sem falar que mesmo que um Admin mal intencionado busque pelos dados de um usuário específico, a senha não é entregue pelo sistema mesmo que esteja criptografada. Um outro detalhe também é que existem pontos no sistema aonde são restritos para pessoas com cargos maiores, como a solicitação de pedidos chamado Requests que é exclusivo dos Gerentes (Managers), e também o painel de controle dos usuários que é restrito aos Administrador (Admin). Existe também o Registro de Auditoria, aonde o sistema grava tudo que você faz de importante no sistema, seja modificar dados de um registro específico, criação de novos usuários de forma manual e até mesmo por buscar dados de uma pessoa específico. Isso foi criado na intenção de expor possíveis comportamentos suspeitos e de prover proteção à própria empresa, visando buscar provas sobre quem fez oque.
   
 ## 🤖Tecnologias usadas
 - .NET 8
@@ -13,6 +13,7 @@ Tem também o fato de que o único ser que tem a senha do usuário é o próprio
 - JWT (JSON Web Tokens)
 - SQLite
 - Visual Studio
+- Swagger
 
 ## 📂Estrutura do projeto
 ```bash
@@ -68,7 +69,7 @@ Aqui é onde os Gerentes podem enviar seus Requests, que são basicamente pedido
 A real magia ocorre aqui. Aqui é onde o Administrador pode conferir todas as ações que foram feitas dentro do sistema, seja enviamento de Requests, validações de Requests, alteração de Status de um usuário e tudo mais. Cada Log diz o autor, o dia e revela também o seu ID, ou seja, é impossível um mal-intencionado fazer uma ação e ainda sair indetectável.  
 
 ## 🔍Como rodar o projeto
-- Primeiro de tudo, use `git copy <URL do projeto>` em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
+- Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o .NET 8 instalado em sua máquina.
 - Depois, navegue é a pasta raiz do projeto
 - Digite `dotnet run` e aguarde a aplicação inicializar.
 - Após isso, poderá começar a testar o sistema!
@@ -78,7 +79,7 @@ Quando você botar o projeto pra rodar, pode notar que já irá ter 50 registros
 Para acessar qualquer uma dessas contas é super simples:
 - Digite "user" junto de sua ID como nome de usuário, como por exemplo **user34**, **user45** e por aí vai.
 - O registro do Admin é simplesmente **Admin** como nome de usuário.
-- A senha de qualquer uma dessas contas é **Password123!**
+- A senha de qualquer uma dessas contas é "**Password123!**".
   
 ## ❌Fraquezas / Incapacidades
 - Não há uma UI agradável para usuários comuns
@@ -89,12 +90,8 @@ Para acessar qualquer uma dessas contas é super simples:
 - Ainda não há como recuperar a senha. Se a senha for perdida, a conta também é perdida.
   
 ## ⭐Melhorias futuras
-- Apenas um Admin poder promover outros Users para serem Managers ou Admins.
-- Um Manager poder suspender um User, mas não deletar
-- Apenas um Admin poder suspender/deletar um Manager ou User, estando no topo de hierarquia
 - Implementar um jeito de poder recuperar a conta através de Perguntas de Segurança (Security Questions)
 - Criação de uma UI simples para mais fácil manuseio do sistema
-- Implementação de JWT e tokens
   
 ## 🔗Links
 Segue aí! 😀https://github.com/CarteiroGalx
