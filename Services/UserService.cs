@@ -69,7 +69,7 @@ namespace PassAuth.Services
 
         public async Task<UserResponseDto?> GetByIdDtoAsync(int id)
         {
-            var user = await context.Users.FindAsync(id);
+            var user = await GetByIdAsync(id);
             var response = new UserResponseDto
             {
                 Id = id,
