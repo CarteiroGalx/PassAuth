@@ -33,18 +33,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " buscou por todos os usuários"
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou por todos os usuários");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -66,18 +56,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " buscou pelo usuário de ID: " + id
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou pelo usuário de ID: " + id);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -102,18 +82,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " modificou dados do usuário de ID: " + id
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " editou o usuário de ID: " + id);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -150,18 +120,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " promoveu usuário de ID: " + id + " para " + dto.NewRole
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " promoveu usuário de ID: " + id + " para " + dto.NewRole);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -171,7 +131,6 @@ namespace PassAuth.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-
 
             try
             {
@@ -197,18 +156,8 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " criou o usuário " + user.Username
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " criou o usuário " + user.Username);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -243,16 +192,12 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
                 var auditLog = new AuditLog
                 {
                     Author = author.Username,
                     AuthorId = author.Id,
-                    Description = author.Username + " alterou os status de usuário '" + id + "' para " + dto.NewStatus + ". " +
-                    "Justificativa: " + dto.Reason
+                    Description = author.Username + " declarou " + dto.NewStatus.ToString() + " para o usuário de ID: " + id
                 };
 
                 var user = await _userService.GetByIdAsync(id);

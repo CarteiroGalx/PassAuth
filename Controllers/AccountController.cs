@@ -59,7 +59,6 @@ namespace PassAuth.Controllers
             {
                 var user = await _userService.GetByIdAsync(id);
                 if (user is null) return Unauthorized();
-                _authService.CheckUserStatus(user);
                 await _accountService.ChangePasswordAsync(user, dto);
                 return Ok(dto);
             }

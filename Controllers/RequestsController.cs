@@ -19,14 +19,12 @@ namespace PassAuth.Controllers
         private readonly IRequestService _requestService;
         private readonly IAuditLogService _auditService;
         private readonly IAuthService _authService;
-        private readonly IUserService _userService;
 
-        public RequestsController(IRequestService requestService, IAuthService authService, IAuditLogService auditService, IUserService userService)
+        public RequestsController(IRequestService requestService, IAuthService authService, IAuditLogService auditService)
         {
             _requestService = requestService;
             _auditService = auditService;
             _authService = authService;
-            _userService = userService;
         }
 
         [HttpPost]
@@ -38,26 +36,21 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " criou o request " + request.Title
-                };
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
                 await _requestService.CreateAsync(request, author.Id, author.Username);
-                await _auditService.CreateAsync(auditLog);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " criou a request: " + request.Title);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = ex.Message });
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest();
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
 
             return Created();
@@ -72,24 +65,18 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " buscou por todos os requests dos Managers"
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " buscou por todos os Requests");
             }
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
             }
             catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+            catch (BadHttpRequestException)
             {
                 return BadRequest();
             }
@@ -106,7 +93,6 @@ namespace PassAuth.Controllers
 
             if (authorId == null) return BadRequest();
             if (!int.TryParse(authorId, out var id)) return Unauthorized();
-            await _authService.CheckUserStatusAsync(id);
 
             var requests = await _requestService.GetByIdAsync(id);
 
@@ -123,24 +109,18 @@ namespace PassAuth.Controllers
 
             try
             {
-                _authService.ValidateAuthor(authorName!, authorId!, out var verifiedAuthorId);
-                var author = await _userService.GetByIdAsync(verifiedAuthorId);
-                if (author == null) return Unauthorized();
-                _authService.CheckUserStatus(author);
-                var auditLog = new AuditLog
-                {
-                    Author = author.Username,
-                    AuthorId = author.Id,
-                    Description = author.Username + " declarou " + dto.NewStatus.ToString() + " na request " + requestId
-                };
-
-                await _auditService.CreateAsync(auditLog);
+                var author = await _authService.ValidateUserAsync(authorName!, authorId!);
+                await _auditService.CreateAsync(author.Id, author.Username, author.Username + " declarou " + dto.NewStatus.ToString() + " na request " + requestId);
             }
             catch (UnauthorizedAccessException)
             {
                 return Unauthorized();
             }
             catch (InvalidOperationException)
+            {
+                return BadRequest();
+            }
+            catch (BadHttpRequestException)
             {
                 return BadRequest();
             }
