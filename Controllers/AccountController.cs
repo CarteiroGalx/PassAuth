@@ -34,16 +34,6 @@ namespace PassAuth.Controllers
             
             var user = await _accountService.GetByIdAsync(id);
             if (user == null) return NotFound();
-
-            try
-            {
-                _authService.CheckUserStatus(user);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(new {message = ex.Message});
-            }
-
             return Ok(user);
         }
 
