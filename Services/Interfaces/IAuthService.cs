@@ -8,8 +8,7 @@ namespace PassAuth.Services.Interfaces
         Task<ProfileResponse> Register(RegisterRequest request);
         Task<string> Login(LoginRequest request);
         string GenerateSecurePassword(int length = 12);
-        void ValidateAuthor(string id, string name, out int verifiedId);
-        void CheckUserStatus(User user);
+        Task<User> ValidateUser(string name, string id);
         Task CheckUserStatusAsync(int userId);
     }
 }

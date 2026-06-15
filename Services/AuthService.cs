@@ -14,11 +14,13 @@ namespace PassAuth.Services
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthService(AppDbContext context, IConfiguration configuration)
+        public AuthService(AppDbContext context, IConfiguration configuration, IUserService userService)
         {
             _context = context;
             _configuration = configuration;
+            _userService = userService;
         }
 
         public async Task<string> Login(LoginRequest request)
@@ -105,21 +107,22 @@ namespace PassAuth.Services
             return new string(result);
         }
 
-        public void ValidateAuthor(string name, string id, out int verifiedId)
+        public async Task<User> ValidateUser(string name, string id)
         {
             if (string.IsNullOrEmpty(name)) throw new UnauthorizedAccessException("Token corrompido ou incompleto");
             if (!int.TryParse(id, out var authorId)) throw new BadHttpRequestException("Token corrompido ou incompleto");
-            verifiedId = authorId;
-        }
 
-        public void CheckUserStatus(User user)
-        {
-            if (user.Status == UserStatus.Banned)
+            var validatedUser = await _userService.GetByIdAsync(authorId);
+            if (validatedUser == null) throw new UnauthorizedAccessException("User not found for the provided token");
+
+            if (validatedUser.Status == UserStatus.Banned)
                 throw new UnauthorizedAccessException("Sua conta está banida. Entre em contato com a administração");
-            if (user.Status == UserStatus.Suspended) {
-                var timeSuspension = user.SuspendedUntil;
+            if (validatedUser.Status == UserStatus.Suspended) {
+                var timeSuspension = validatedUser.SuspendedUntil;
                 throw new UnauthorizedAccessException($"Sua conta está suspensa por mais {timeSuspension} minutos.");
             }
+
+            return validatedUser;
         }
 
         public async Task CheckUserStatusAsync(int userId)

@@ -6,5 +6,6 @@ namespace PassAuth.Services.Interfaces
         Task<List<AuditLog>> GetAllAsync();
         Task<AuditLog?> GetAsync(int id);
         Task CreateAsync(AuditLog entity);
+        Task CreateAsync(int id, string author, string description);
     }
 }

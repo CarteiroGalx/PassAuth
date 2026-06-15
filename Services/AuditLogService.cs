@@ -21,6 +21,19 @@ namespace PassAuth.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task CreateAsync(int id, string author, string description)
+        {
+            var log = new AuditLog
+            {
+                Id = id,
+                Author = author,
+                Description = description,
+                OccurredAt = DateTime.UtcNow
+            };
+            _context.Audit.Add(log);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<AuditLog>> GetAllAsync()
         {
             return await _context.Audit.AsNoTracking().OrderByDescending(e => e.OccurredAt).ToListAsync();
